@@ -7,6 +7,7 @@ import userRoutes from "../route/usersRoute.js";
 dbConnect();
 const app =express();
 
+app.use(express.json());
 //routes
 app.use("/",userRoutes);
 

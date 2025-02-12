@@ -1,13 +1,13 @@
-import User from "../models/User.js"
+import User from "../models/User.js";
+import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
-export const registerusercontroller = async(req, res) =>{
+export const registerusercontroller = asyncHandler(async(req, res) =>{
    const{ firstname, lastname, contact, email, password}=req.body;
   //check if user exist
   const userExists = await User.findOne({ email });
   if(userExists){
-     res.json({
-        message: "User already exists",
-     });
+    
+     throw new Error ("User already exists");
   }
   //hash password
   const salt = await bcrypt.genSalt(10);
@@ -26,4 +26,21 @@ export const registerusercontroller = async(req, res) =>{
      data:user,
   })
 
-}; 
+}); 
+
+export const loginusercontroller = asyncHandler(async (req,res) => {
+   const {email, password} = req.body;
+   //finding user in db
+   const userFound = await User.findOne({
+      email,
+   });
+   if(userFound && await bcrypt.compare(password, userFound?.password)){
+      res.json({
+         status:'success',
+         message:'User login successfull',
+         userFound,
+      });
+   }else{
+     throw new Error('Invalid User Credentials');
+   }
+});

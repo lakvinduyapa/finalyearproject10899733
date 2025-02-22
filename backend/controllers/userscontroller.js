@@ -1,6 +1,8 @@
 import User from "../models/User.js";
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
+import generateToken from "../utils/jwtToken.js";
+
 export const registerusercontroller = asyncHandler(async(req, res) =>{
    const{ firstname, lastname, contact, email, password}=req.body;
   //check if user exist
@@ -39,6 +41,7 @@ export const loginusercontroller = asyncHandler(async (req,res) => {
          status:'success',
          message:'User login successfull',
          userFound,
+         token: generateToken(userFound?._id),
       });
    }else{
      throw new Error('Invalid User Credentials');

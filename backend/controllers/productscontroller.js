@@ -58,12 +58,80 @@ const endIndex = page * limit;
 const total = await Product.countDocuments();
 
 productQuery = productQuery.skip(startIndex).limit(limit);
-
+const pagination = {};
+if(endIndex < total){
+    pagination.next = {
+        page: page + 1,
+        limit,
+    };
+}
+if(startIndex > 0){
+    pagination.prev = {
+        page: page - 1,
+        limit,
+    };
+}
   //query await
   const products = await productQuery;
 
     res.json({
         status:"success",
+        total,
+        results: products.length,
+        pagination,
+        message: "Products fetched successfully",
         products,
+    });
+});
+
+//fetching single product
+export const getsingleproductcontroller = asyncHandler(async(req,res)=> {
+    const product = await Product.findById(req.params.id);
+    if(!product){
+        throw new Error ("Product not found");
+    }
+    res.json({
+        status: "success",
+        message:"Product fetched successfully",
+        product,
+    });
+});
+
+//updating product
+export const updateproductcontroller = asyncHandler(async(req,res)=> {
+    const{ 
+        name, 
+        description, 
+        category, 
+        seller, 
+        price, 
+        totalQty,
+    } = req.body;
+
+    const product = await Product.findByIdAndUpdate(req.params.id,{
+        name, 
+        description, 
+        category, 
+        seller, 
+        price, 
+        totalQty, 
+    },
+{
+    new:true,
+});
+    res.json({
+        status: "success",
+        message:"Product updated successfully",
+        product,
+    });
+});
+
+//deleting product
+
+export const deleteproductcontroller = asyncHandler(async(req,res)=> {
+   await Product.findByIdAndDelete(req.params.id);
+    res.json({
+        status: "success",
+        message:"Product deleted successfully",
     });
 });

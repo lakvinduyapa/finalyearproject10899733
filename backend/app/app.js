@@ -6,6 +6,7 @@ import userRoutes from "../route/usersRoute.js";
 import productRoutes from "../route/productsRoute.js";
 import categoryRoutes from "../route/categoriesRoute.js";
 import { globalErrorHandler, notFound } from "../middlewares/globalErrorHandler.js";
+import reviewRoutes from "../route/reviewRoute.js";
 
 //database connection
 dbConnect();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/api/v1/users",userRoutes);
 app.use("/api/v1/products",productRoutes);
 app.use("/api/v1/categories",categoryRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
 
 //error handling middleware
 app.use(notFound);

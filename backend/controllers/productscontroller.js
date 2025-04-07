@@ -83,7 +83,7 @@ if(startIndex > 0){
     };
 }
   //query await
-  const products = await productQuery;
+  const products = await productQuery.populate('reviews');
 
     res.json({
         status:"success",
@@ -97,7 +97,7 @@ if(startIndex > 0){
 
 //fetching single product
 export const getsingleproductcontroller = asyncHandler(async(req,res)=> {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate('reviews');
     if(!product){
         throw new Error ("Product not found");
     }

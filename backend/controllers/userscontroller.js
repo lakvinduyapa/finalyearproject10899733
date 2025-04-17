@@ -58,3 +58,27 @@ export const getUserProfilecontroller = asyncHandler(async (req,res) =>{
    msg:"Welcome to the Profile",
   });  
 });
+
+export const updateShippingAddresscontroller = asyncHandler(async(req,res)=>{
+   const{addressline1, addressline2,city,province,postalcode,country}=req.body;
+   const user = await User.findByIdAndUpdate(req.userAuthId, {
+      ShippingAddress:{
+         addressline1, 
+         addressline2,
+         city,
+         province,
+         postalcode,
+         country 
+      },
+      hasShippingAddress: true,
+   },
+{
+   new: true,
+}
+);
+res.json({
+   status:'success',
+   message:'Shipping Address Updated Successfully',
+   user,
+});
+});

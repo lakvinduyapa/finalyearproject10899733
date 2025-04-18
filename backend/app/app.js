@@ -10,6 +10,7 @@ import { globalErrorHandler, notFound } from "../middlewares/globalErrorHandler.
 import reviewRoutes from "../route/reviewRoute.js";
 import orderRoutes from "../route/ordersRoute.js";
 import Order from "../models/Order.js";
+import couponRoutes from "../route/couponsRoute.js";
 
 
 //database connection
@@ -94,6 +95,7 @@ app.use("/api/v1/products",productRoutes);
 app.use("/api/v1/categories",categoryRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/orders", orderRoutes);
+app.use("/api/v1/coupons", couponRoutes);
 
 //error handling middleware
 app.use(notFound);

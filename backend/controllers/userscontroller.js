@@ -51,12 +51,13 @@ export const loginusercontroller = asyncHandler(async (req,res) => {
 });
 
 export const getUserProfilecontroller = asyncHandler(async (req,res) =>{
-   const token =getTokenFromHeader(req);
-   const verified = verifyToken(token);
-   console.log(req);
-  res.json({
-   msg:"Welcome to the Profile",
-  });  
+   const user=await User.findById(req.userAuthId).populate("orders");
+   res.json({
+      status:"success",
+      message:"User Profile fetched successfully",
+      user,
+   });
+
 });
 
 export const updateShippingAddresscontroller = asyncHandler(async(req,res)=>{

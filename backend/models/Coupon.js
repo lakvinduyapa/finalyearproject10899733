@@ -45,31 +45,25 @@ CouponSchema.virtual('daysLeft').get(function(){
    return daysLeft;
 });
 
-CouponSchema.pre('validate', function(next){
-    if(this.endDate < this.startDate){
-        next(new Error("End date cannot be less than the start date"));
+CouponSchema.pre('validate', function(next) {
+    if (this.endDate < this.startDate) {
+      return next(new Error("End date cannot be less than the start date"));
     }
+  
+    if (this.discount <= 0 || this.discount > 100) {
+      return next(new Error("Discount must be between 1 and 100"));
+    }
+  
+    if (this.startDate < Date.now()) {
+      return next(new Error("Start date should be today or a future date"));
+    }
+  
+    if (this.endDate < Date.now()) {
+      return next(new Error("End date should be a future date"));
+    }
+  
     next();
-});
-
-CouponSchema.pre('validate', function(next){
-    if(this.discount<=0 || this.discount>100){
-        next(new Error("Discount cannot be zero of more than 100"));
-    }
-});
-
-CouponSchema.pre('validate', function(next){
-    if(this.startDate < Date.now()){
-        next(new Error("Start date should be a present or a future date"));
-    }
-    next();
-});
-
-CouponSchema.pre('validate', function(next){
-    if(this.endDate < Date.now()){
-        next(new Error("End date should be a future date"));
-    }
-    next();
-});
+  });
+  
 const Coupon = mongoose.model("Coupon", CouponSchema);
 export default Coupon;

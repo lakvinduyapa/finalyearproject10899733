@@ -33,6 +33,14 @@ const UserSchema = new Schema(
             type:Boolean,
             default:false,
         },
+        isAdmin:{
+            type:Boolean,
+            default:false,
+        },
+        isSeller: { 
+            type: Boolean, 
+            default: false 
+        },
         ShippingAddress:{
             addressline1:{
                 type:String,

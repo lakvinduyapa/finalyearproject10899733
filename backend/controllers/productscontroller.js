@@ -3,7 +3,9 @@ import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 
 export const createproductcontoller = asyncHandler (async (req,res) =>{
+    console.log(req.files);
     const{ name, description, category, seller, price, totalQty} = req.body;
+    const convertedImgs = req.files.map((file) => file?.path);
     //check if product exists
     const productExists = await Product.findOne({ name});
     if(productExists){
@@ -24,6 +26,7 @@ export const createproductcontoller = asyncHandler (async (req,res) =>{
         seller: req.userAuthId,
         price,
         totalQty,
+        images: convertedImgs,
         });
     //send the product to the category
     categoryFound.products.push(product._id);

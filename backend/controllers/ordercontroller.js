@@ -9,102 +9,102 @@ import Coupon from "../models/Coupon.js";
 
 const stripe = new Stripe(process.env.STRIPE_KEY);
 
-export const createordercontroller = asyncHandler (async(req, res) =>{
-   //get the coupon
-   const {coupon} = req.query;
-   
-    const couponFound = await Coupon.findOne({
-      code:coupon?.toUpperCase(),
-    });
-    if(couponFound?.isExpired){
-      throw new Error ("Coupon has expired");
+export const createordercontroller = asyncHandler(async (req, res) => {
+  const { coupon } = req.query;
+  let discount = 0;
+
+  if (coupon) {
+    const couponFound = await Coupon.findOne({ code: coupon.toUpperCase() });
+    if (!couponFound) {
+      throw new Error("Coupon doesn't exist");
     }
-    if(!couponFound){
-      throw new Error ("Coupon doesn't exist");
+    if (couponFound.isExpired) {
+      throw new Error("Coupon has expired");
     }
-
-   //apply discount
-   const discount = couponFound?.discount / 100;
-
-  //get user payload
-  const{orderItems, shippingAddress, totalPrice} = req.body;
-    //find user
-   const user = await User.findById(req.userAuthId);
-   //shipping address check
-   if(!user?.hasShippingAddress){
-    throw new Error("Please Enter a Shipping Address");
-   }
-   //check if order is empty
-   if(orderItems?.length<=0){
-    throw new Error('No order items')
-   }
-   //Place the order and save to database
-   const order = await Order.create({
-    user:user?._id,
-    orderItems,
-    shippingAddress,
-    totalPrice: couponFound ? totalPrice - totalPrice * discount : totalPrice,
-   });
-   console.log(order);
-   //update the product quantity and total quantity sold
-    const products= await Product.find({ _id:{$in:orderItems}});
-
-    orderItems?.map(async(order)=> {
-        const product = products?.find((product) => {
-            return product?._id?.toString() === order?._id?.toString();
-        });
-        if(product){
-            product.totalSold += order.qty;
-        }
-        await product.save()
-    });
-   //push order into user
-   user.orders.push(order?._id);
-   await user.save();
-
-   //stripe payment integration
-const orderproducts = await Product.find({ _id: { $in: orderItems.map(item => item._id) } });
-
-const line_items = orderItems.map((item) => {
-  const product = orderproducts.find(p => p._id.toString() === item._id.toString());
-  if (!product) {
-    throw new Error(`Product with ID ${item._id} not found`);
+    discount = couponFound.discount / 100;
   }
 
-  return {
-    price_data: {
-      currency: "usd",
-      product_data: {
-        name: product.name,
-        description: product.description || "No description",
+  const { orderItems, shippingAddress, totalPrice } = req.body;
+  const user = await User.findById(req.userAuthId);
+
+  if (!user?.hasShippingAddress) {
+    throw new Error("Please Enter a Shipping Address");
+  }
+
+  if (orderItems?.length <= 0) {
+    throw new Error('No order items');
+  }
+
+  // Fetch product details
+  const products = await Product.find({ _id: { $in: orderItems.map(item => item._id) } });
+
+  // Build enhanced orderItems with seller
+  const enhancedOrderItems = orderItems.map((item) => {
+    const product = products.find(p => p._id.toString() === item._id.toString());
+    if (!product) {
+      throw new Error(`Product not found: ${item._id}`);
+    }
+
+    return {
+      name: product.name,
+      qty: item.qty,
+      price: product.price,
+      product: product._id,
+      seller: product.seller,   // 🔥 Add seller ID here
+    };
+  });
+
+  // Create the order
+  const order = await Order.create({
+    user: user?._id,     
+    orderItems: enhancedOrderItems,
+    shippingAddress,
+    totalPrice: totalPrice - totalPrice * discount,
+  });
+
+  console.log(order);
+
+  // Update totalSold for each product
+  await Promise.all(orderItems.map(async (item) => {
+    const product = products.find(p => p._id.toString() === item._id.toString());
+    if (product) {
+      product.totalSold += item.qty;
+      await product.save();
+    }
+  }));
+
+  // Push order into user orders
+  user.orders.push(order?._id);
+  await user.save();
+
+  // Stripe payment integration
+  const line_items = enhancedOrderItems.map((item) => {
+    return {
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: item.name,
+          description: item.description || "No description",
+        },
+        unit_amount: Math.round(item.price * (1 - discount) * 100),
       },
-      unit_amount: Math.round(product.price * 100), // amount in cents
+      quantity: item.qty,
+    };
+  });
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: line_items,
+    metadata: {
+      orderId: JSON.stringify(order?._id),
     },
-    quantity: item.qty,
-  };
+    mode: "payment",
+    success_url: "http://localhost:4000/success",
+    cancel_url: "http://localhost:4000/cancel",
+  });
+
+  res.send({ url: session.url });
 });
 
-const session = await stripe.checkout.sessions.create({
-  line_items: line_items,
-  metadata:{
-    orderId: JSON.stringify(order?._id),
-  },
-  mode: "payment",
-  success_url: "http://localhost:4000/success",
-  cancel_url: "http://localhost:4000/cancel",
-});
-
-res.send({ url: session.url });
-
-   //payment webhook
-   //update the user order
-//    res.json({
-//     success:true,
-//     message:"Order created successfully",
-//     order,
-//     user,
-//    });
-});
 
 export const getallorderscontroller = asyncHandler(async(req,res) =>{
 
@@ -138,4 +138,69 @@ export const updateordercontroller = asyncHandler(async(req,res)=>{
     message:"Order updated",
     updatedorder,
   });
-})
+});
+
+export const getorderstatscontroller = asyncHandler(async(req,res) =>{
+
+//total sales, min order, max order and average sale value
+const orderstats = await Order.aggregate([{
+  "$group":{
+    _id:null,
+    minimumSale:{
+      $min: '$totalPrice',
+    },
+    maximumSale:{
+      $max: '$totalPrice',
+    },
+    totalSales:{
+      $sum: '$totalPrice',
+    },
+    averageSale:{
+      $avg: '$totalPrice',
+    },
+  },
+},]);
+
+//get the date
+const date = new Date();
+const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+const saleToday = await Order.aggregate([
+  {
+    $match:{
+      createdAt:{
+        $gte: today,
+      },
+    },
+  },
+  {
+    $group:{
+      _id: null,
+      totalSales:{
+        $sum:"$totalPrice",
+      },
+    },
+  },
+]);
+
+res.status(200).json({
+  success:true,
+  message:"Sum of Orders",
+  orderstats, saleToday
+});
+});
+
+export const getSellerOrdersController = asyncHandler(async (req, res) => {
+  const sellerId = req.userAuthId; 
+
+  const orders = await Order.find({
+    "orderItems.seller": sellerId,
+  }).populate("user", "name email") // populate customer info
+    .populate("orderItems.product", "name price"); 
+
+  res.status(200).json({
+    success: true,
+    message: "Seller's orders fetched successfully",
+    totalOrders:orders.length,
+    orders,
+  });
+});

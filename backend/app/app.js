@@ -11,7 +11,7 @@ import reviewRoutes from "../route/reviewRoute.js";
 import orderRoutes from "../route/ordersRoute.js";
 import Order from "../models/Order.js";
 import couponRoutes from "../route/couponsRoute.js";
-
+import postRoutes from "../route/postsRoute.js";
 
 //database connection
 dbConnect();
@@ -96,6 +96,8 @@ app.use("/api/v1/categories",categoryRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/coupons", couponRoutes);
+app.use("/api/v1/posts", postRoutes);
+
 
 //error handling middleware
 app.use(notFound);

@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import cors from "cors";
 dotenv.config();
 import express from 'express';
 import Stripe from "stripe";
@@ -17,7 +18,8 @@ import postRoutes from "../route/postsRoute.js";
 dbConnect();
 
 const app =express();
-
+//cors
+app.use(cors());
 //stripe webhook
 //stripe instance
 const stripe = new Stripe(process.env.STRIPE_KEY);

@@ -25,7 +25,7 @@ export const createcategorycontroller = asyncHandler(async(req,res)=>{
 
 //get all categories
 export const getcategoriescontroller = asyncHandler(async(req,res)=>{
-   const categories = await Category.findOne();
+   const categories = await Category.find();
 
     res.json({
         status:"Success",

@@ -41,7 +41,6 @@ export const createproductcontoller = asyncHandler (async (req,res) =>{
 });
 
 export const getproductcontroller = asyncHandler(async(req,res)=>{
-    console.log(req.query);
     //query
     let productQuery = Product.find()
   

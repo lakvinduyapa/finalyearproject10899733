@@ -4,7 +4,7 @@ import baseURL from "../../../utils/baseURL";
 
 //initial state
 const initialState = {
-    loadinng:false,
+    loading:false,
     error:null,
     users:[],
     user:{},
@@ -12,9 +12,33 @@ const initialState = {
     userAuth:{
         loading: false,
         error: null,
-        userInfo:{},
+        userInfo: localStorage.getItem("userInfo")
+      ? JSON.parse(localStorage.getItem("userInfo"))
+      : null,
     },
 };
+
+export const registerUserAction = createAsyncThunk(
+  'users/register',
+  async ({ firstname, lastname, contact, email, password, isSeller, isAdmin }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(`${baseURL}/users/register`, {
+        firstname,
+        lastname,
+        contact,
+        email,
+        password,
+        isSeller,   
+        isAdmin,    
+      });
+      return data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 
 // login action
 export const loginUserAction = createAsyncThunk(
@@ -56,6 +80,18 @@ const usersSlice = createSlice({
             state.userAuth.loading = false;
 
     });
+    builder.addCase(registerUserAction.pending, (state) => {
+  state.loadinng = true;
+});
+builder.addCase(registerUserAction.fulfilled, (state, action) => {
+  state.user = action.payload;
+  state.loadinng = false;
+});
+builder.addCase(registerUserAction.rejected, (state, action) => {
+  state.error = action.payload;
+  state.loadinng = false;
+});
+
 },
         
 });

@@ -14,6 +14,7 @@ import {
   ShieldCheckIcon,
   UserGroupIcon,
   XMarkIcon,
+  PencilSquareIcon,
 } from "@heroicons/react/24/outline";
 import logo from "../Navbar/logo3.png";
 const ordersLinks = [
@@ -160,6 +161,16 @@ const CategoryLinks = [
   },
 ];
 
+const postLinks = [
+  {
+    name: "Add Post",
+    href: "create-post",
+    icon: PencilSquareIcon,
+    current: false,
+  },
+];
+
+
 export default function Example() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -288,7 +299,26 @@ export default function Example() {
                         ))}
                       </div>
                     </div>
-                  </nav>
+                 {/* Posts mobile (added after Categories) */}
+               <div className="mt-3 pt-3">
+             <div className="space-y-1 px-2">
+           {postLinks.map((item) => (
+      <Link
+        key={item.name}
+        to={item.href}
+        className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white">
+        <item.icon
+          className="mr-4 h-6 w-6 text-cyan-200"
+          aria-hidden="true"
+        />
+        {item.name}
+      </Link>
+    ))}
+  </div>
+</div>
+
+</nav>
+                  
                   {/* end of mobile nav */}
                 </Dialog.Panel>
               </Transition.Child>
@@ -300,9 +330,9 @@ export default function Example() {
         </Transition.Root>
 
         {/* Static sidebar for desktop */}
-        <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+        <div className="hidden lg:fixed lg:top-24 lg:bottom-0 lg:flex lg:w-64 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex flex-grow flex-col overflow-y-auto bg-cyan-900 pt-5 pb-4">
+          <div className="flex flex-grow flex-col overflow-y-auto bg-cyan-900 pt-16 pb-4">
             <nav
               className="mt-5 flex flex-1 flex-col divide-y divide-cyan-800 overflow-y-auto"
               aria-label="Sidebar">
@@ -377,9 +407,27 @@ export default function Example() {
                   ))}
                 </div>
               </div>
+               {/* Posts */}
+<div className="mt-3 pt-3">
+  <div className="space-y-1 px-2">
+    {postLinks.map((item) => (
+      <Link
+        key={item.name}
+        to={item.href}
+        className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white">
+        <item.icon
+          className="mr-4 h-6 w-6 text-cyan-200"
+          aria-hidden="true"
+        />
+        {item.name}
+      </Link>
+    ))}
+  </div>
+</div>
             </nav>
           </div>
-        </div>
+        </div> 
+       
 
         <div className="flex flex-1 flex-col lg:pl-64">
           <div className="flex h-16 flex-shrink-0 border-b border-gray-200 bg-white lg:border-none">

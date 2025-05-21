@@ -9,14 +9,24 @@ import {
 import { Link } from "react-router-dom";
 import baseURL from "../../utils/baseURL";
 import logo from "./logo3.png";
+import { useSelector } from "react-redux";
 
 export default function Navbar() {
   const categoriesToDisplay = [];
+  const { userInfo } = useSelector((state) => state.users.userAuth);
+
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   //get cart items from local storage
   let cartItemsFromLocalStorage;
+
+//get login user from localstorage
+const isLoggedIn = !!userInfo?.token;
+const isAdmin = userInfo?.userFound?.isAdmin;
+const isSeller = userInfo?.userFound?.isSeller;
+
+
   return (
     <div className="bg-white">
       {/* Mobile menu */}
@@ -69,7 +79,7 @@ export default function Navbar() {
                   {categoriesToDisplay?.length <= 0 ? (
                     <>
                       <Link
-                        to={`${baseURL}/products?category=clothing`}
+                        to="/"
                         className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
                         Home
                       </Link>
@@ -81,10 +91,28 @@ export default function Navbar() {
                       </Link>
 
                       <Link
-                        to="/"
+                        to="/newsfeed"
                         className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
                         Newsfeed
                       </Link>
+                      
+                      {isLoggedIn && ( <>
+                       {isAdmin && (
+                       <Link
+                        to={`/admin`}
+                        className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
+                        Admin Dashboard
+                      </Link>
+                       )}
+                        {!isAdmin && isSeller && (
+                         <Link
+                        to={`/seller`}
+                        className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
+                        Seller Dashboard
+                      </Link>
+                         )}
+                        </>
+                      )}
                     </>
                   ) : (
                     categoriesToDisplay?.map((category) => {
@@ -104,7 +132,8 @@ export default function Navbar() {
 
                 {/* mobile links register/login */}
                 <div className="space-y-6 border-t border-gray-200 py-6 px-4">
-                  <div className="flow-root">
+               {!isLoggedIn && 
+               <>    <div className="flow-root">
                     <Link
                       to="/register"
                       className="-m-2 block p-2 font-medium text-gray-900">
@@ -118,6 +147,7 @@ export default function Navbar() {
                       Sign in
                     </Link>
                   </div>
+                  </>}
                 </div>
 
                 <div className="space-y-6 border-t border-gray-200 py-6 px-4"></div>
@@ -131,12 +161,13 @@ export default function Navbar() {
         <nav aria-label="Top">
           {/* Top navigation  desktop*/}
           <div className="bg-[#FFB1E1]">
-            <div className="mx-auto flex h-10 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-              <p className="flex-1 text-center text-sm font-medium text-black lg:flex-none">
-                Register to Get a 10% Discount
-              </p>
+            <div className="relative mx-auto flex h-10 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+            <p className="absolute left-1/2 transform -translate-x-1/2 text-sm font-medium text-black">
+             Register to Get a 10% Discount
+               </p>
 
               <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+                {!isLoggedIn && <>
                 <Link
                   to="/register"
                   className="text-sm font-medium text-black hover:text-gray-100">
@@ -148,6 +179,7 @@ export default function Navbar() {
                   className="text-sm font-medium text-black hover:text-gray-100">
                   Sign in
                 </Link>
+                </>}
               </div>
             </div>
           </div>
@@ -169,47 +201,63 @@ export default function Navbar() {
                     </Link>
                   </div>
 
-                  <div className="hidden h-full lg:flex">
-                    {/*  menus links*/}
-                    <Popover.Group className="ml-8">
-                      <div className="flex h-full justify-center space-x-8">
-                        {categoriesToDisplay?.length <= 0 ? (
+                 <div className="hidden h-full lg:flex">
+  {/*  menus links*/}
+  <Popover.Group className="ml-8">
+    <div className="flex h-full justify-center space-x-8">
+      {categoriesToDisplay?.length <= 0 ? (
+        <>
+          <Link
+            to="/"
+            className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
+            Home
+          </Link>
+
+          <Link
+            to="/"
+            className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
+            Products
+          </Link>
+          <Link
+            to="/newsfeed"
+            className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
+            Newsfeed
+          </Link>
+
+           {isLoggedIn && (
                           <>
-                            <Link
-                        to={`${baseURL}/products?category=clothing`}
-                        className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                        Home
-                      </Link>
+                  {isAdmin && (
+                  <Link
+                  to={`/admin`}
+                  className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
+                  Admin Dashboard
+                </Link>
+                 )}
+            {!isAdmin && isSeller && (
+                   <Link
+                  to={`/seller`}
+                  className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
+                  Seller Dashboard
+                </Link>
+                 )}
+                </>
+                 )}
 
-                      <Link
-                        to="/"
-                        className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                        Products
-                      </Link>
+        </>
+      ) : (
+        categoriesToDisplay.map((category) => (
+          <Link
+            key={category?._id}
+            to={`/products-filters?category=${category?.name}`}
+            className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
+            {category?.name}
+          </Link>
+        ))
+      )}
+    </div>
+  </Popover.Group>
+</div>
 
-                      <Link
-                        to="/"
-                        className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                        Newsfeed
-                      </Link>
-                          </>
-                        ) : (
-                          categoriesToDisplay?.map((category) => {
-                            return (
-                              <>
-                                <Link
-                                  key={category?._id}
-                                  to={`/products-filters?category=${category?.name}`}
-                                  className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                                  {category?.name}
-                                </Link>
-                              </>
-                            );
-                          })
-                        )}
-                      </div>
-                    </Popover.Group>
-                  </div>
 
                   {/* Mobile Naviagtion */}
                   <div className="flex flex-1 items-center lg:hidden">
@@ -234,13 +282,15 @@ export default function Navbar() {
                   <div className="flex flex-1 items-center justify-end">
                     <div className="flex items-center lg:ml-8">
                       <div className="flex space-x-8">
-                        <div className="flex">
+                        {isLoggedIn && (
+                          <div className="flex">
                           <Link
                             to="/customer-profile"
                             className="-m-2 p-2 text-gray-400 hover:text-gray-500">
                             <UserIcon className="h-6 w-6" aria-hidden="true" />
                           </Link>
                         </div>
+                        )}
                       </div>
 
                       <span

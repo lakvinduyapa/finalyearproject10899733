@@ -36,7 +36,7 @@ export const createPostController = asyncHandler(async (req, res) => {
 // Get all posts
 export const getAllPostsController = asyncHandler(async (req, res) => {
   const posts = await Post.find()
-    .populate("user", "name email")
+    .populate("user", "firstname lastname email")
     .sort({ createdAt: -1 });
 
   res.status(200).json({
@@ -48,7 +48,7 @@ export const getAllPostsController = asyncHandler(async (req, res) => {
 // Get a single post
 export const getSinglePostController = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id)
-    .populate("user", "name email");
+    .populate("user", "firstname lastname email");
 
   if (!post) {
     res.status(404);

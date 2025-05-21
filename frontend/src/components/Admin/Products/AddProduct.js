@@ -2,33 +2,33 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-
 import ErrorMsg from "../../ErrorMsg/ErrorMsg";
 import LoadingComponent from "../../LoadingComp/LoadingComponent";
 import SuccessMsg from "../../SuccessMsg/SuccessMsg";
-
+import { createProductAction } from "../../../redux/slices/products/productSlices";
+import { fetchCategoriesAction } from "../../../redux/slices/categories/categoriesSlice";
 //animated components for react-select
 const animatedComponents = makeAnimated();
 
 export default function AddProduct() {
-  let categories,
-    sizeOptionsCoverted,
-    handleSizeChange,
-    colorOptionsCoverted,
-    handleColorChangeOption,
-    brands,
-    loading,
-    error,
-    isAdded;
+ const dispatch = useDispatch();
+  
+     //categories
+  useEffect(() => {
+    dispatch(fetchCategoriesAction());
+  }, [dispatch]);
+
+  //select data from store
+  const { categories,loading,error } = useSelector((state) => state?.categories?.categories);
+console.log(categories,loading,error);
+
+  let isAdded;
 
   //---form data---
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     category: "",
-    sizes: "",
-    brand: "",
-    colors: "",
     images: "",
     price: "",
     totalQty: "",
@@ -42,14 +42,13 @@ export default function AddProduct() {
   //onSubmit
   const handleOnSubmit = (e) => {
     e.preventDefault();
+    dispatch(createProductAction(formData));
+
     //reset form data
     setFormData({
       name: "",
       description: "",
       category: "",
-      sizes: "",
-      brand: "",
-      colors: "",
       images: "",
       price: "",
       totalQty: "",
@@ -88,25 +87,6 @@ export default function AddProduct() {
                   />
                 </div>
               </div>
-              {/* size option */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Select Size
-                </label>
-                <Select
-                  components={animatedComponents}
-                  isMulti
-                  name="sizes"
-                  options={sizeOptionsCoverted}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
-                  isClearable={true}
-                  isLoading={false}
-                  isSearchable={true}
-                  closeMenuOnSelect={false}
-                  onChange={(item) => handleSizeChange(item)}
-                />
-              </div>
               {/* Select category */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
@@ -118,10 +98,6 @@ export default function AddProduct() {
                   onChange={handleOnChange}
                   className="mt-1  block w-full rounded-md border-gray-300 py-2  pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm border"
                   defaultValue="Canada">
-                  {/* <option>-- Select Category --</option>
-                  <option value="Clothings">Clothings</option>
-                  <option value="Shoes">Shoes</option>
-                  <option value="Accessories">Accessories</option> */}
                   <option>-- Select Category --</option>
                   {categories?.map((category) => (
                     <option key={category?._id} value={category?.name}>
@@ -129,45 +105,6 @@ export default function AddProduct() {
                     </option>
                   ))}
                 </select>
-              </div>
-              {/* Select Brand */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Select Brand
-                </label>
-                <select
-                  name="brand"
-                  value={formData.brand}
-                  onChange={handleOnChange}
-                  className="mt-1  block w-full rounded-md border-gray-300 py-2  pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm border"
-                  defaultValue="Canada">
-                  <option>-- Select Brand --</option>
-                  {brands?.map((brand) => (
-                    <option key={brand?._id} value={brand?.name}>
-                      {brand.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Select Color */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Select Color
-                </label>
-                <Select
-                  components={animatedComponents}
-                  isMulti
-                  name="colors"
-                  options={colorOptionsCoverted}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
-                  isClearable={true}
-                  isLoading={false}
-                  isSearchable={true}
-                  closeMenuOnSelect={false}
-                  onChange={(e) => handleColorChangeOption(e)}
-                />
               </div>
 
               {/* upload images */}

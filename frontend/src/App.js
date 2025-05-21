@@ -23,12 +23,14 @@ import ProductsFilters from "./components/Users/Products/ProductsFilters";
 import CustomerProfile from "./components/Users/Profile/CustomerProfile";
 import AddReview from "./components/Users/Reviews/AddReview";
 import UpdateCategory from "./components/Admin/Categories/UpdateCategory";
-
 import OrdersList from "./components/Admin/Orders/OdersList";
 import ManageOrders from "./components/Admin/Orders/ManageOrders";
-import Customers from "./components/Admin/Orders/Customers";
-
+import Customers from "./components/Admin/Orders/Customers"; 
+import CreatePost from "./components/Admin/Posts/CreatePost";
+import Newsfeed from "./components/Newsfeed/Newsfeed";
 import SellerDashboard from "./components/Seller/SellerDashboard";
+import AdminRoute from "./components/AuthRoute/AdminRoute";
+import SellerRoute from "./components/AuthRoute/SellerRoute";
 
 const App = () => {
   return (
@@ -36,8 +38,11 @@ const App = () => {
       <Navbar />
       {/* hide navbar if admin */}
       <Routes>
-        {/* admin route */}
-        <Route path="admin" element={<AdminDashboard />}>
+        {/* admin route - protected */}
+        <Route path="admin" element={
+          <AdminRoute>
+          <AdminDashboard />
+          </AdminRoute>}>
           {/* products */} <Route path="" element={<OrdersList />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="manage-products" element={<ManageStocks />} />
@@ -55,14 +60,23 @@ const App = () => {
           <Route path="manage-orders" element={<ManageOrders />} />
           <Route path="order-payment" element={<OrderPayment />} />
           <Route path="customers" element={<Customers />} />
+          {/* Posts */}
+          <Route path="create-post" element={<CreatePost />} />
+
         </Route>
         {/* seller route */}
-<Route path="seller" element={<SellerDashboard />}>
-  <Route path="" element={<OrdersList />} />
-  <Route path="add-product" element={<AddProduct />} />
-  <Route path="manage-products" element={<ManageStocks />} />
-  <Route path="order-payment" element={<OrderPayment />} />
-  <Route path="manage-orders" element={<ManageOrders />} />
+        <Route path="seller" element={
+          <SellerRoute>
+          <SellerDashboard />
+          </SellerRoute>}>
+        <Route path="" element={<OrdersList />} />
+        <Route path="add-product" element={<AddProduct />} />
+        <Route path="manage-products" element={<ManageStocks />} />
+        <Route path="products/edit/:id" element={<UpdateProduct />} />
+        <Route path="order-payment" element={<OrderPayment />} />
+        <Route path="manage-orders" element={<ManageOrders />} />
+        <Route path="create-post" element={<CreatePost />} />
+
 </Route>
 
         {/* public links */}
@@ -81,6 +95,8 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/customer-profile" element={<CustomerProfile />} />
+        {/* Newsfeed */}
+        <Route path="/newsfeed" element={<Newsfeed />} />
       </Routes>
     </BrowserRouter>
   );

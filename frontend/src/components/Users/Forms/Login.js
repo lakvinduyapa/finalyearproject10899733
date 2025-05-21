@@ -29,18 +29,18 @@ const Login = () => {
 const {error, loading, userInfo} = useSelector((state)=> state?.users?.userAuth);
 console.log(error, loading, userInfo);
 
-// //redirect
-// useEffect(() => {
-//     if (userInfo?.token) {
-//       if (userInfo?.userFound?.isAdmin) {
-//         navigate("/admin");
-//       } else if (userInfo?.userFound?.isSeller) {
-//         navigate("/seller");
-//       } else {
-//         navigate("/customer-profile");
-//       }
-//     }
-//   }, [userInfo, navigate]);
+//redirect
+useEffect(() => {
+    if (userInfo?.token) {
+      if (userInfo?.userFound?.isAdmin) {
+        navigate("/admin");
+      } else if (userInfo?.userFound?.isSeller) {
+        navigate("/seller");
+      } else {
+        navigate("/customer-profile");
+      }
+    }
+  }, [userInfo, navigate]);
 
   return (
     <>

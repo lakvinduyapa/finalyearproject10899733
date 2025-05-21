@@ -1,5 +1,4 @@
 import axios from "axios";
-import { act } from "react-dom/test-utils";
 import baseURL from "../../../utils/baseURL";
 import {
   resetErrAction,
@@ -7,10 +6,10 @@ import {
 } from "../globalActions/globalActions";
 const { createAsyncThunk, createSlice } = require("@reduxjs/toolkit");
 
-//initalsState
+// Initial state
 const initialState = {
   categories: [],
-  category: {},
+  category: {}, // single category
   loading: false,
   error: null,
   isAdded: false,
@@ -18,30 +17,18 @@ const initialState = {
   isDelete: false,
 };
 
-//create Category action
+// ✅ Create Category
 export const createCategoryAction = createAsyncThunk(
   "category/create",
-  async (payload, { rejectWithValue, getState, dispatch }) => {
-    console.log(payload);
+  async (formData, { rejectWithValue, getState }) => {
     try {
-      const { name, file } = payload;
-      //fromData
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("file", file);
-      //Token - Authenticated
       const token = getState()?.users?.userAuth?.userInfo?.token;
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       };
-      //Images
-      const { data } = await axios.post(
-        `${baseURL}/categories`,
-        formData,
-        config
-      );
+      const { data } = await axios.post(`${baseURL}/categories`, formData, config);
       return data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
@@ -49,24 +36,76 @@ export const createCategoryAction = createAsyncThunk(
   }
 );
 
-//fetch Categories action
+// ✅ Fetch All Categories
 export const fetchCategoriesAction = createAsyncThunk(
-  "category/fetch All",
-  async (payload, { rejectWithValue, getState, dispatch }) => {
+  "category/fetchAll",
+  async (_, { rejectWithValue }) => {
     try {
       const { data } = await axios.get(`${baseURL}/categories`);
+      return data.categories;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// ✅ Fetch Single Category
+export const fetchCategoryAction = createAsyncThunk(
+  "category/fetchSingle",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`${baseURL}/categories/${id}`);
       return data;
     } catch (error) {
       return rejectWithValue(error?.response?.data);
     }
   }
 );
-//slice
+
+// ✅ Update Category
+export const updateCategoryAction = createAsyncThunk(
+  "category/update",
+  async ({ id, name }, { rejectWithValue, getState }) => {
+    try {
+      const token = getState()?.users?.userAuth?.userInfo?.token;
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await axios.put(`${baseURL}/categories/${id}`, { name }, config);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// ✅ Delete Category
+export const deleteCategoryAction = createAsyncThunk(
+  "category/delete",
+  async (categoryId, { rejectWithValue, getState }) => {
+    try {
+      const token = getState()?.users?.userAuth?.userInfo?.token;
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await axios.delete(`${baseURL}/categories/${categoryId}/delete`, config);
+      return { data, id: categoryId };
+    } catch (error) {
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// Slice
 const categorySlice = createSlice({
   name: "categories",
   initialState,
   extraReducers: (builder) => {
-    //create
+    // Create
     builder.addCase(createCategoryAction.pending, (state) => {
       state.loading = true;
     });
@@ -77,12 +116,10 @@ const categorySlice = createSlice({
     });
     builder.addCase(createCategoryAction.rejected, (state, action) => {
       state.loading = false;
-      state.category = null;
-      state.isAdded = false;
       state.error = action.payload;
     });
 
-    //fetch all
+    // Fetch all
     builder.addCase(fetchCategoriesAction.pending, (state) => {
       state.loading = true;
     });
@@ -92,21 +129,62 @@ const categorySlice = createSlice({
     });
     builder.addCase(fetchCategoriesAction.rejected, (state, action) => {
       state.loading = false;
-      state.categories = null;
       state.error = action.payload;
     });
-    //Reset err
-    builder.addCase(resetErrAction.pending, (state, action) => {
+
+    // Fetch single
+    builder.addCase(fetchCategoryAction.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchCategoryAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.category = action.payload;
+    });
+    builder.addCase(fetchCategoryAction.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+
+    // Update
+    builder.addCase(updateCategoryAction.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(updateCategoryAction.fulfilled, (state) => {
+      state.loading = false;
+      state.isUpdated = true;
+    });
+    builder.addCase(updateCategoryAction.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+
+    // Delete
+    builder.addCase(deleteCategoryAction.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteCategoryAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.isDelete = true;
+      state.categories = state.categories.filter(
+        (cat) => cat._id !== action.payload.id
+      );
+    });
+    builder.addCase(deleteCategoryAction.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+
+    // Reset
+    builder.addCase(resetErrAction.pending, (state) => {
       state.error = null;
     });
-    //Reset success
-    builder.addCase(resetSuccessAction.pending, (state, action) => {
+    builder.addCase(resetSuccessAction.pending, (state) => {
       state.isAdded = false;
+      state.isUpdated = false;
+      state.isDelete = false;
     });
   },
 });
 
-//generate the reducer
-const categoryReducer = categorySlice.reducer;
+export default categorySlice.reducer;
 
-export default categoryReducer;

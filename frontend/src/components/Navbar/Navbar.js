@@ -85,7 +85,7 @@ const isSeller = userInfo?.userFound?.isSeller;
                       </Link>
 
                       <Link
-                        to="/"
+                        to="/products"
                         className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
                         Products
                       </Link>
@@ -214,7 +214,7 @@ const isSeller = userInfo?.userFound?.isSeller;
           </Link>
 
           <Link
-            to="/"
+            to="/products"
             className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
             Products
           </Link>

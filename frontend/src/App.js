@@ -18,6 +18,7 @@ import AddCategory from "./components/Admin/Categories/AddCategory";
 import AllCategories from "./components/HomePage/AllCategories";
 import UpdateCoupon from "./components/Admin/Coupons/UpdateCoupon";
 import Product from "./components/Users/Products/Product";
+import ProductsPage from "./components/Users/Products/ProductsPage";
 import ShoppingCart from "./components/Users/Products/ShoppingCart";
 import ProductsFilters from "./components/Users/Products/ProductsFilters";
 import CustomerProfile from "./components/Users/Profile/CustomerProfile";
@@ -85,6 +86,8 @@ const App = () => {
         <Route path="/products-filters" element={<ProductsFilters />} />
         <Route path="/products/:id" element={<Product />} />
         <Route path="/all-categories" element={<AllCategories />} />
+        <Route path="/products" element={<ProductsPage />} />
+
         {/* review */}
         <Route path="/add-review/:id" element={<AddReview />} />
 

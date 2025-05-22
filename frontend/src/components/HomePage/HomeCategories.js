@@ -2,9 +2,11 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategoriesAction } from "../../redux/slices/categories/categoriesSlice";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const HomeCategories = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const { categories, loading, error } = useSelector(
     (state) => state.categories
@@ -17,7 +19,7 @@ const HomeCategories = () => {
   // Show only top 5 categories on homepage
   const categoriesToShow = categories?.slice(0, 5);
 
-  if (loading) return <p className="text-center py-10">Loading...</p>;
+  if (loading) return <p className="text-center py-10">{t("loading")}</p>;
   if (error) return <p className="text-center text-red-600 py-10">{error}</p>;
 
   return (

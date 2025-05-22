@@ -4,9 +4,14 @@ import { fetchProductsAction } from "../../../redux/slices/products/productSlice
 import { fetchCategoriesAction } from "../../../redux/slices/categories/categoriesSlice";
 import { addToCart } from "../../../redux/slices/cart/cartSlice";
 import { Link, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function ProductsPage() {
   const dispatch = useDispatch();
+  const { t, i18n } = useTranslation();
+  const isTamil = i18n.language === "ta";
+  const fontSize = isTamil ? "text-sm" : "text-base";
+
   const { products, loading } = useSelector((state) => state.products);
   const { categories } = useSelector((state) => state.categories);
 
@@ -24,7 +29,6 @@ export default function ProductsPage() {
     dispatch(fetchCategoriesAction());
   }, [dispatch]);
 
-  // If category in URL changes while component is mounted
   useEffect(() => {
     setSelectedCategory(searchParams.get("category") || "");
   }, [searchParams]);
@@ -59,38 +63,38 @@ export default function ProductsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="flex justify-between mb-6 items-center">
-        <h1 className="text-2xl font-bold">All Products</h1>
+        <h1 className={`text-2xl font-bold ${fontSize}`}>{t("all_products")}</h1>
         <input
           type="text"
-          placeholder="Search Products..."
+          placeholder={t("search_placeholder")}
           className="border border-gray-300 px-4 py-2 rounded shadow-sm w-64 max-sm:w-full"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      {/* Mobile Filter Toggle Button */}
+      {/* Mobile Filter Toggle */}
       <div className="sm:hidden mb-4">
         <button
           className="bg-gray-200 px-4 py-2 rounded shadow"
           onClick={() => setShowMobileFilters(true)}
         >
-          Show Filters
+          {t("show_filters")}
         </button>
       </div>
 
       <div className="flex gap-8">
-        {/* Sidebar Filters */}
+        {/* Sidebar */}
         <aside className="hidden sm:block w-64 border-r pr-4">
           <Filters />
         </aside>
 
-        {/* Mobile Sidebar Overlay */}
+        {/* Mobile Sidebar */}
         {showMobileFilters && (
           <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex">
             <div className="bg-white w-64 p-4 overflow-y-auto">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-bold">Filters</h2>
+                <h2 className={`text-lg font-bold ${fontSize}`}>{t("filters")}</h2>
                 <button onClick={() => setShowMobileFilters(false)}>❌</button>
               </div>
               <Filters />
@@ -102,12 +106,12 @@ export default function ProductsPage() {
           </div>
         )}
 
-        {/* Product Grid */}
+        {/* Products */}
         <section className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {loading ? (
-            <p>Loading...</p>
-          ) : filteredProducts?.length === 0 ? (
-            <p>No products found.</p>
+            <p>{t("loading")}...</p>
+          ) : filteredProducts.length === 0 ? (
+            <p>{t("no_products")}</p>
           ) : (
             filteredProducts.map((product) => (
               <div key={product._id} className="bg-white shadow rounded p-4">
@@ -117,8 +121,8 @@ export default function ProductsPage() {
                     alt={product.name}
                     className="w-full h-48 object-cover rounded"
                   />
-                  <h3 className="mt-2 font-semibold text-lg">{product.name}</h3>
-                  <p className="text-gray-600">Rs. {product.price}</p>
+                  <h3 className={`mt-2 font-semibold text-lg ${fontSize}`}>{product.name}</h3>
+                  <p className={`text-gray-600 ${fontSize}`}>Rs. {product.price}</p>
                 </Link>
                 <button
                   onClick={() =>
@@ -132,9 +136,9 @@ export default function ProductsPage() {
                       })
                     )
                   }
-                  className="mt-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                  className="mt-2 bg-[#FC6DC5] text-black font-semibold px-3 py-1 rounded hover:bg-blue-700"
                 >
-                  Add to Cart
+                  {t("add_to_cart")}
                 </button>
               </div>
             ))
@@ -144,28 +148,23 @@ export default function ProductsPage() {
     </div>
   );
 
-  // Filter Component
   function Filters() {
     return (
       <>
         <div className="mb-6">
-          <h3 className="font-medium mb-2">By Category</h3>
+          <h3 className={`font-semibold mb-2 text-[#FC6DC5] ${fontSize}`}>{t("by_category")}</h3>
           <ul className="space-y-1">
             <li
               onClick={() => setSelectedCategory("")}
-              className={`cursor-pointer ${
-                selectedCategory === "" ? "font-bold text-blue-600" : ""
-              }`}
+              className={`cursor-pointer ${selectedCategory === "" ? "font-bold text-blue-600" : ""}`}
             >
-              All
+              {t("all")}
             </li>
             {categories?.map((cat) => (
               <li
                 key={cat._id}
                 onClick={() => setSelectedCategory(cat.name)}
-                className={`cursor-pointer ${
-                  selectedCategory === cat.name ? "font-bold text-blue-600" : ""
-                }`}
+                className={`cursor-pointer ${selectedCategory === cat.name ? "font-bold text-blue-600" : ""}`}
               >
                 {cat.name}
               </li>
@@ -174,21 +173,19 @@ export default function ProductsPage() {
         </div>
 
         <div className="mb-6">
-          <h3 className="font-medium mb-2">By Price</h3>
+          <h3 className={`font-semibold mb-2 text-[#FC6DC5] ${fontSize}`}>{t("by_price")}</h3>
           <ul className="space-y-1">
             {[
-              { label: "All", value: "" },
-              { label: "Below Rs. 1000", value: "0-1000" },
-              { label: "Rs. 1000 - 5000", value: "1000-5000" },
-              { label: "Rs. 5000 - 10,000", value: "5000-10000" },
-              { label: "Above Rs. 10,000", value: "10000-1000000" },
+              { label: t("all"), value: "" },
+              { label: t("price_below_1000"), value: "0-1000" },
+              { label: t("price_1000_5000"), value: "1000-5000" },
+              { label: t("price_5000_10000"), value: "5000-10000" },
+              { label: t("price_above_10000"), value: "10000-1000000" },
             ].map((range) => (
               <li
                 key={range.value}
                 onClick={() => setPriceRange(range.value)}
-                className={`cursor-pointer ${
-                  priceRange === range.value ? "font-bold text-blue-600" : ""
-                }`}
+                className={`cursor-pointer ${priceRange === range.value ? "font-bold text-blue-600" : ""}`}
               >
                 {range.label}
               </li>
@@ -197,17 +194,17 @@ export default function ProductsPage() {
         </div>
 
         <div className="mb-6">
-          <h3 className="font-medium mb-2">Sort By</h3>
+          <h3 className={`font-semibold mb-2 text-[#FC6DC5] ${fontSize}`}>{t("sort_by")}</h3>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             className="w-full border px-2 py-1 rounded"
           >
-            <option value="">-- Select --</option>
-            <option value="priceLow">Price: Low to High</option>
-            <option value="priceHigh">Price: High to Low</option>
-            <option value="ratingHigh">Rating: High to Low</option>
-            <option value="ratingLow">Rating: Low to High</option>
+            <option value="">{t("select_sort")}</option>
+            <option value="priceLow">{t("sort_price_low")}</option>
+            <option value="priceHigh">{t("sort_price_high")}</option>
+            <option value="ratingHigh">{t("sort_rating_high")}</option>
+            <option value="ratingLow">{t("sort_rating_low")}</option>
           </select>
         </div>
 
@@ -219,9 +216,9 @@ export default function ProductsPage() {
               setPriceRange("");
               setSortBy("");
             }}
-            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm rounded shadow"
+            className="px-4 py-2 bg-[#FC6DC5] hover:bg-[#FFB1E1] text-sm font-semibold rounded shadow"
           >
-            Clear Filters
+            {t("clear_filters")}
           </button>
         </div>
       </>

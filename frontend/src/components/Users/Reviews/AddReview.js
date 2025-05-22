@@ -2,11 +2,15 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { createReviewAction } from "../../../redux/slices/products/productSlices";
+import { useTranslation } from "react-i18next";
 
 export default function AddReview() {
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
+  const isTamil = i18n.language === "ta";
+  const fontSize = isTamil ? "text-base" : "text-sm";
 
   const [formData, setFormData] = useState({
     rating: "",
@@ -25,14 +29,14 @@ export default function AddReview() {
     dispatch(createReviewAction({ productId: id, reviewData: formData }))
       .unwrap()
       .then(() => {
-        setSuccessMessage("✅ Review submitted successfully!");
+        setSuccessMessage(t("review_success"));
         setErrorMessage("");
         setTimeout(() => {
           navigate(`/products/${id}`);
-        }, 2000); // redirect after 2 seconds
+        }, 2000);
       })
       .catch((err) => {
-        setErrorMessage("❌ Failed to submit review: " + err);
+        setErrorMessage(t("review_error") + ": " + err);
         setSuccessMessage("");
       });
   };
@@ -41,10 +45,10 @@ export default function AddReview() {
     <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-          Add Your Review
+          {t("add_review")}
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          <span className="font-medium text-indigo-600">You are reviewing: </span>
+        <p className={`mt-2 text-center ${fontSize} text-gray-600`}>
+          <span className="font-medium text-indigo-600">{t("reviewing")}:</span>{" "}
           <span className="text-gray-900">Product ID {id}</span>
         </p>
       </div>
@@ -65,7 +69,7 @@ export default function AddReview() {
           <form className="space-y-6" onSubmit={handleOnSubmit}>
             <div>
               <label htmlFor="rating" className="block text-sm font-medium text-gray-700">
-                Rating
+                {t("rating")}
               </label>
               <select
                 value={formData.rating}
@@ -73,22 +77,16 @@ export default function AddReview() {
                 name="rating"
                 className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 border-2 focus:outline-none focus:ring-indigo-500 sm:text-sm"
               >
-                <option value="">-- Select Rating --</option>
-                <option value="1">1</option>
-                <option value="1.5">1.5</option>
-                <option value="2">2</option>
-                <option value="2.5">2.5</option>
-                <option value="3">3</option>
-                <option value="3.5">3.5</option>
-                <option value="4">4</option>
-                <option value="4.5">4.5</option>
-                <option value="5">5</option>
+                <option value="">{t("select_rating")}</option>
+                {[1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((rate) => (
+                  <option key={rate} value={rate}>{rate}</option>
+                ))}
               </select>
             </div>
 
             <div>
               <label htmlFor="reviewmsg" className="block text-sm font-medium text-gray-700">
-                Message
+                {t("message")}
               </label>
               <textarea
                 rows={4}
@@ -103,7 +101,7 @@ export default function AddReview() {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:ring-indigo-500">
-                Submit Review
+                {t("submit_review")}
               </button>
             </div>
 
@@ -112,7 +110,7 @@ export default function AddReview() {
                 type="button"
                 onClick={() => navigate(`/products/${id}`)}
                 className="flex w-full justify-center rounded-md bg-red-600 py-2 px-4 text-sm font-medium text-white hover:bg-red-700 focus:ring-red-500">
-                Cancel
+                {t("cancel")}
               </button>
             </div>
           </form>

@@ -7,19 +7,24 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import baseURL from "../../utils/baseURL";
 import logo from "./logo3.png";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUserAction } from "../../redux/slices/users/usersSlice";
 import { clearCart } from "../../redux/slices/cart/cartSlice";
 
-
 export default function Navbar() {
+  const { t, i18n } = useTranslation();
+  const handleLanguageChange = (e) => {
+    i18n.changeLanguage(e.target.value);
+  };
+
   const dispatch = useDispatch();
   const categoriesToDisplay = [];
   const { userInfo } = useSelector((state) => state.users.userAuth);
-  const cartItems = useSelector((state) => state.cart.cartItems); // 🛒 cart state
-  const cartItemCount = cartItems.reduce((acc, item) => acc + item.qty, 0); // total quantity
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const cartItemCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -72,24 +77,24 @@ export default function Navbar() {
 
                 <div className="space-y-6 border-t border-gray-200 py-6 px-4">
                   <Link to="/" className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                    Home
+                    {t("home")}
                   </Link>
                   <Link to="/products" className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                    Products
+                    {t("products")}
                   </Link>
                   <Link to="/newsfeed" className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                    Newsfeed
+                    {t("newsfeed")}
                   </Link>
                   {isLoggedIn && (
                     <>
                       {isAdmin && (
                         <Link to="/admin" className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                          Admin Dashboard
+                          {t("admin_dashboard")}
                         </Link>
                       )}
                       {!isAdmin && isSeller && (
                         <Link to="/seller" className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                          Seller Dashboard
+                          {t("seller_dashboard")}
                         </Link>
                       )}
                     </>
@@ -100,15 +105,15 @@ export default function Navbar() {
                   {!isLoggedIn ? (
                     <>
                       <Link to="/register" className="-m-2 block p-2 font-medium text-gray-900">
-                        Create an account
+                        {t("create_account")}
                       </Link>
                       <Link to="/login" className="-m-2 block p-2 font-medium text-gray-900">
-                        Sign in
+                        {t("sign_in")}
                       </Link>
                     </>
                   ) : (
                     <button onClick={logoutHandler} className="-m-2 block p-2 font-medium text-gray-900">
-                      Logout
+                      {t("logout")}
                     </button>
                   )}
                 </div>
@@ -129,16 +134,16 @@ export default function Navbar() {
                 {!isLoggedIn ? (
                   <>
                     <Link to="/register" className="text-sm font-medium text-black hover:text-gray-100">
-                      Create an account
+                      {t("create_account")}
                     </Link>
                     <span className="h-6 w-px bg-gray-600" aria-hidden="true" />
                     <Link to="/login" className="text-sm font-medium text-black hover:text-gray-100">
-                      Sign in
+                      {t("sign_in")}
                     </Link>
                   </>
                 ) : (
                   <button onClick={logoutHandler} className="text-sm font-medium text-black hover:text-gray-100">
-                    Logout
+                    {t("logout")}
                   </button>
                 )}
               </div>
@@ -159,24 +164,24 @@ export default function Navbar() {
                   <Popover.Group className="ml-8">
                     <div className="flex h-full justify-center space-x-8">
                       <Link to="/" className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                        Home
+                        {t("home")}
                       </Link>
                       <Link to="/products" className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                        Products
+                        {t("products")}
                       </Link>
                       <Link to="/newsfeed" className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                        Newsfeed
+                        {t("newsfeed")}
                       </Link>
                       {isLoggedIn && (
                         <>
                           {isAdmin && (
                             <Link to="/admin" className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                              Admin Dashboard
+                              {t("admin_dashboard")}
                             </Link>
                           )}
                           {!isAdmin && isSeller && (
                             <Link to="/seller" className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">
-                              Seller Dashboard
+                              {t("seller_dashboard")}
                             </Link>
                           )}
                         </>
@@ -202,6 +207,17 @@ export default function Navbar() {
 
                 <div className="flex flex-1 items-center justify-end">
                   <div className="flex items-center lg:ml-8">
+                    {/* Language Selector */}
+                    <select
+                      onChange={handleLanguageChange}
+                      defaultValue={i18n.language}
+                      className="border border-gray-300 rounded px-2 py-1 text-sm mr-4"
+                    >
+                      <option value="en">English</option>
+                      <option value="si">සිංහල</option>
+                      <option value="ta">தமிழ்</option>
+                    </select>
+
                     <div className="flex space-x-8">
                       {isLoggedIn && (
                         <div className="flex">

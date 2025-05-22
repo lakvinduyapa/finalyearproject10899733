@@ -239,7 +239,7 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
                   </Transition.Child>
                   <div className="flex flex-shrink-0 items-center px-4"></div>
                   <nav
-                    className="mt-5 flex flex-1 flex-col divide-y divide-cyan-800 overflow-y-auto"
+                    className="mt-5 flex flex-1 flex-col divide-y divide-gray-200 overflow-y-auto"
                     aria-label="Sidebar">
                     {/* orders links mobile */}
                     <div className="mt-1 pt-1">
@@ -248,9 +248,9 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
                           <Link
                             key={item.name}
                             to={item.href}
-                            className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white">
+                            className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-black hover:bg-cyan-600 hover:text-white">
                             <item.icon
-                              className="mr-4 h-6 w-6 text-cyan-200"
+                              className="mr-4 h-6 w-6 text-black"
                               aria-hidden="true"
                             />
                             {item.name}
@@ -267,12 +267,12 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
                           className={classNames(
                             item.current
                               ? "bg-cyan-800 text-white"
-                              : "text-cyan-100 hover:text-white hover:bg-cyan-600",
+                              : "text-black hover:text-white hover:bg-cyan-600",
                             "group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md"
                           )}
                           aria-current={item.current ? "page" : undefined}>
                           <item.icon
-                            className="mr-4 h-6 w-6 flex-shrink-0 text-cyan-200"
+                            className="mr-4 h-6 w-6 flex-shrink-0 text-black"
                             aria-hidden="true"
                           />
                           {item.name}
@@ -285,9 +285,9 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
                           <Link
                             key={item.name}
                             to={item.href}
-                            className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white">
+                            className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-black hover:bg-cyan-600 hover:text-white">
                             <item.icon
-                              className="mr-4 h-6 w-6 text-cyan-200"
+                              className="mr-4 h-6 w-6 text-black"
                               aria-hidden="true"
                             />
                             {item.name}
@@ -302,9 +302,9 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
                           <Link
                             key={item.name}
                             to={item.href}
-                            className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white">
+                            className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-black hover:bg-cyan-600 hover:text-white">
                             <item.icon
-                              className="mr-4 h-6 w-6 text-cyan-200"
+                              className="mr-4 h-6 w-6 text-black"
                               aria-hidden="true"
                             />
                             {item.name}
@@ -319,9 +319,9 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
       <Link
         key={item.name}
         to={item.href}
-        className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white">
+        className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-black hover:bg-cyan-600 hover:text-white">
         <item.icon
-          className="mr-4 h-6 w-6 text-cyan-200"
+          className="mr-4 h-6 w-6 text-black"
           aria-hidden="true"
         />
         {item.name}
@@ -345,9 +345,9 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
         {/* Static sidebar for desktop */}
         <div className="hidden lg:fixed lg:top-24 lg:bottom-0 lg:flex lg:w-64 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex flex-grow flex-col overflow-y-auto bg-cyan-900 pt-16 pb-4">
+          <div className="flex flex-grow flex-col overflow-y-auto bg-[#FFB1E1] pt-16 pb-4">
             <nav
-              className="mt-5 flex flex-1 flex-col divide-y divide-cyan-800 overflow-y-auto"
+              className="mt-5 flex flex-1 flex-col divide-y divide-grey-200 overflow-y-auto"
               aria-label="Sidebar">
               {/* orders links desktop */}
               <div className="mt-1 pt-1">
@@ -356,7 +356,7 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
                     <Link
                       key={item.name}
                       to={item.href}
-                      className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white">
+                      className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-black hover:bg-cyan-600 hover:text-white">
                       <item.icon
                         className="mr-4 h-6 w-6 text-cyan-200"
                         aria-hidden="true"
@@ -375,12 +375,12 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
                     className={classNames(
                       item.current
                         ? "bg-cyan-800 text-white"
-                        : "text-cyan-100 hover:text-white hover:bg-cyan-600",
+                        : "text-black hover:text-white hover:bg-cyan-600",
                       "group flex items-center px-2 py-2 text-sm leading-6 font-medium rounded-md"
                     )}
                     aria-current={item.current ? "page" : undefined}>
                     <item.icon
-                      className="mr-4 h-6 w-6 flex-shrink-0 text-cyan-200"
+                      className="mr-4 h-6 w-6 flex-shrink-0 text-black"
                       aria-hidden="true"
                     />
                     {item.name}
@@ -393,7 +393,7 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
                     <Link
                       key={item.name}
                       to={item.href}
-                      className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white">
+                      className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-black hover:bg-cyan-600 hover:text-white">
                       <item.icon
                         className="mr-4 h-6 w-6 text-cyan-200"
                         aria-hidden="true"
@@ -410,9 +410,9 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
                     <Link
                       key={item.name}
                       to={item.href}
-                      className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white">
+                      className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-black hover:bg-cyan-600 hover:text-white">
                       <item.icon
-                        className="mr-4 h-6 w-6 text-cyan-200"
+                        className="mr-4 h-6 w-6 text-black"
                         aria-hidden="true"
                       />
                       {item.name}
@@ -421,22 +421,22 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
                 </div>
               </div>
                {/* Posts */}
-<div className="mt-3 pt-3">
-  <div className="space-y-1 px-2">
-    {postLinks.map((item) => (
-      <Link
-        key={item.name}
-        to={item.href}
-        className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white">
-        <item.icon
-          className="mr-4 h-6 w-6 text-cyan-200"
-          aria-hidden="true"
-        />
-        {item.name}
-      </Link>
-    ))}
-  </div>
-</div>
+              <div className="mt-3 pt-3">
+                <div className="space-y-1 px-2">
+                  {postLinks.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-black hover:bg-cyan-600 hover:text-white">
+                      <item.icon
+                        className="mr-4 h-6 w-6 text-black"
+                        aria-hidden="true"
+                      />
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </nav>
           </div>
         </div> 

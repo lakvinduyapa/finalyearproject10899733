@@ -1,10 +1,15 @@
+import { useTranslation } from "react-i18next";
 import { CalendarIcon } from "@heroicons/react/20/solid";
 
 export default function CustomerDetails({ email, dateJoined, fullName }) {
+  const { t, i18n } = useTranslation();
+  const isTamil = i18n.language === "ta";
+  const fontSize = isTamil ? "text-sm" : "text-base";
+
   return (
     <div className="bg-white shadow rounded-lg p-6 mb-10 text-center">
       <h2 className="text-3xl font-bold text-gray-900 mb-2">
-        Hi, {fullName}! You are welcome!!!
+        {t("greeting")}, {fullName}!
       </h2>
 
       <div className="flex flex-col items-center space-y-2 text-sm text-gray-600">
@@ -27,7 +32,7 @@ export default function CustomerDetails({ email, dateJoined, fullName }) {
 
         <div className="flex items-center">
           <CalendarIcon className="mr-1.5 h-5 w-5 text-gray-400" />
-          Date Joined: {dateJoined}
+          {t("date_joined")}: {dateJoined}
         </div>
       </div>
     </div>

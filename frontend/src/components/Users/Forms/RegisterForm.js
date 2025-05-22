@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import ErrorComponent from "../../ErrorMsg/ErrorMsg";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUserAction } from "../../../redux/slices/users/usersSlice";
+import { useTranslation } from "react-i18next";
 
 const RegisterForm = () => {
   const dispatch = useDispatch();
+  const { t, i18n } = useTranslation();
+  const isTamil = i18n.language === "ta";
+  const fontSizeClass = isTamil ? "text-sm" : "text-base";
+
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
     contact: "",
     email: "",
     password: "",
-    role: "customer", // default role
+    role: "customer",
   });
 
   const { firstname, lastname, contact, email, password, role } = formData;
@@ -29,7 +34,7 @@ const RegisterForm = () => {
       contact,
       email,
       password,
-      isSeller: role === "seller" ? true : false,
+      isSeller: role === "seller",
       isAdmin: false,
     };
 
@@ -43,90 +48,92 @@ const RegisterForm = () => {
   }
 
   return (
-    <section className="relative overflow-x-hidden">
-      <div className="container px-4 mx-auto">
-        <div className="flex flex-wrap items-center">
-          <div className="w-full lg:w-2/6 px-4 mb-12 lg:mb-0">
-            <div className="py-20 text-center">
-              <h3 className="mb-8 text-4xl md:text-5xl font-bold font-heading">
-                Signing up with social is super quick
-              </h3>
+<section className="min-h-screen w-full flex items-center justify-center bg-gray-100">
+  <div className="w-full max-w-6xl bg-white shadow-lg flex flex-col lg:flex-row">
+    {/* Image Panel */}
+    <div
+      className="lg:w-1/2 h-64 lg:h-auto bg-cover bg-center"
+      style={{
+        backgroundImage:
+          'url("https://salaglobal.com/wp-content/uploads/2021/12/ghfuyg.jpg")',
+      }}
+    ></div>
 
-              {userAuth?.error?.message && (
-                <ErrorComponent message={userAuth?.error?.message} />
-              )}
+    {/* Register Form Panel */}
+    <div className="lg:w-1/2 p-10">
+      <div className="max-w-xl mx-auto">
+        <h3 className={`mb-8 text-4xl md:text-5xl text-center font-bold font-heading ${fontSizeClass}`}>
+          {t("signup_heading")}
+        </h3>
 
-              <p className="mb-10">Please, do not hesitate</p>
-              <form onSubmit={onSubmitHandler}>
-                <select
-                  name="role"
-                  value={role}
-                  onChange={onChangeHandler}
-                  className="w-full mb-4 px-12 py-4 border border-gray-300 rounded-md"
-                >
-                  <option value="customer">Register as Customer</option>
-                  <option value="seller">Register as Seller</option>
-                </select>
+        {userAuth?.error?.message && (
+          <ErrorComponent message={userAuth?.error?.message} />
+        )}
 
-                <input
-                  name="firstname"
-                  value={firstname}
-                  onChange={onChangeHandler}
-                  className="w-full mb-4 px-12 py-6 border border-gray-200 focus:ring-blue-300 focus:border-blue-300 rounded-md"
-                  type="text"
-                  placeholder="First Name"
-                />
-                <input
-                  name="lastname"
-                  value={lastname}
-                  onChange={onChangeHandler}
-                  className="w-full mb-4 px-12 py-6 border border-gray-200 focus:ring-blue-300 focus:border-blue-300 rounded-md"
-                  type="text"
-                  placeholder="Last Name"
-                />
-                <input
-                  name="contact"
-                  value={contact}
-                  onChange={onChangeHandler}
-                  className="w-full mb-4 px-12 py-6 border border-gray-200 focus:ring-blue-300 focus:border-blue-300 rounded-md"
-                  type="text"
-                  placeholder="Contact"
-                />
-                <input
-                  name="email"
-                  value={email}
-                  onChange={onChangeHandler}
-                  className="w-full mb-4 px-12 py-6 border border-gray-200 focus:ring-blue-300 focus:border-blue-300 rounded-md"
-                  type="email"
-                  placeholder="Enter your email"
-                />
-                <input
-                  name="password"
-                  value={password}
-                  onChange={onChangeHandler}
-                  className="w-full mb-4 px-12 py-6 border border-gray-200 focus:ring-blue-300 focus:border-blue-300 rounded-md"
-                  type="password"
-                  placeholder="Enter your password"
-                />
-                <button
-                  disabled={loading}
-                  className="mt-12 md:mt-16 bg-blue-800 hover:bg-blue-900 text-white font-bold font-heading py-5 px-8 rounded-md uppercase"
-                >
-                  {loading ? "Loading..." : "Register"}
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+        <p className={`mb-10 text-center ${fontSizeClass}`}>{t("signup_subheading")}</p>
+
+        <form onSubmit={onSubmitHandler}>
+          <select
+            name="role"
+            value={role}
+            onChange={onChangeHandler}
+            className="w-full mb-4 px-6 py-4 border border-gray-300 rounded-md"
+          >
+            <option value="customer">{t("register_as_customer")}</option>
+            <option value="seller">{t("register_as_seller")}</option>
+          </select>
+
+          <input
+            name="firstname"
+            value={firstname}
+            onChange={onChangeHandler}
+            className="w-full mb-4 px-6 py-4 border border-gray-200 focus:ring-blue-300 focus:border-blue-300 rounded-md"
+            type="text"
+            placeholder={t("first_name")}
+          />
+          <input
+            name="lastname"
+            value={lastname}
+            onChange={onChangeHandler}
+            className="w-full mb-4 px-6 py-4 border border-gray-200 focus:ring-blue-300 focus:border-blue-300 rounded-md"
+            type="text"
+            placeholder={t("last_name")}
+          />
+          <input
+            name="contact"
+            value={contact}
+            onChange={onChangeHandler}
+            className="w-full mb-4 px-6 py-4 border border-gray-200 focus:ring-blue-300 focus:border-blue-300 rounded-md"
+            type="text"
+            placeholder={t("contact")}
+          />
+          <input
+            name="email"
+            value={email}
+            onChange={onChangeHandler}
+            className="w-full mb-4 px-6 py-4 border border-gray-200 focus:ring-blue-300 focus:border-blue-300 rounded-md"
+            type="email"
+            placeholder={t("enter_email")}
+          />
+          <input
+            name="password"
+            value={password}
+            onChange={onChangeHandler}
+            className="w-full mb-4 px-6 py-4 border border-gray-200 focus:ring-blue-300 focus:border-blue-300 rounded-md"
+            type="password"
+            placeholder={t("enter_password")}
+          />
+          <button
+            disabled={loading}
+            className="mt-8 bg-[#FC6DC5] hover:bg-[#FFB1E1] text-black font-bold font-heading py-4 px-8 rounded-md uppercase w-full"
+          >
+            {loading ? t("loading") : t("register")}
+          </button>
+        </form>
       </div>
-      <div
-        className="hidden lg:block lg:absolute top-0 bottom-0 right-0 lg:w-3/6 bg-center bg-cover bg-no-repeat"
-        style={{
-          backgroundImage:
-            'url("https://cdn.pixabay.com/photo/2017/03/29/04/47/high-heels-2184095_1280.jpg")',
-        }}
-      />
-    </section>
+    </div>
+  </div>
+</section>
   );
 };
 

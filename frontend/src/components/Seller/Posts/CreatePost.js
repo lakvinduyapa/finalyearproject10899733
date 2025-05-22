@@ -1,13 +1,17 @@
-// Create Post Form for Admin Dashboard (Styled Like AddProduct)
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ErrorMsg from "../../ErrorMsg/ErrorMsg";
 import LoadingComponent from "../../LoadingComp/LoadingComponent";
 import SuccessMsg from "../../SuccessMsg/SuccessMsg";
 import { createPostAction } from "../../../redux/slices/posts/postSlices";
+import { useTranslation } from "react-i18next";
 
 export default function CreatePost() {
   const dispatch = useDispatch();
+  const { t, i18n } = useTranslation();
+  const isTamil = i18n.language === "ta";
+  const fontSizeClass = isTamil ? "text-sm" : "text-base";
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -22,7 +26,7 @@ export default function CreatePost() {
   if (!user?.userFound?.isAdmin && !user?.userFound?.isSeller) {
     return (
       <p className="text-center text-red-500 mt-6">
-        Access Denied: Only Sellers and Admins can post.
+        {t("access_denied")}
       </p>
     );
   }
@@ -45,11 +49,11 @@ export default function CreatePost() {
   return (
     <>
       {error && <ErrorMsg message={error?.message} />}
-      {isAdded && <SuccessMsg message="Post Created Successfully" />}
+      {isAdded && <SuccessMsg message={t("post_success")} />}
       <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-            Create Newsfeed Post
+          <h2 className={`mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 ${fontSizeClass}`}>
+            {t("create_post")}
           </h2>
         </div>
 
@@ -57,7 +61,7 @@ export default function CreatePost() {
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <form className="space-y-6" onSubmit={handleOnSubmit}>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Title</label>
+                <label className="block text-sm font-medium text-gray-700">{t("title")}</label>
                 <input
                   name="title"
                   value={title}
@@ -69,7 +73,7 @@ export default function CreatePost() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Description</label>
+                <label className="block text-sm font-medium text-gray-700">{t("description")}</label>
                 <textarea
                   name="description"
                   value={description}
@@ -81,7 +85,7 @@ export default function CreatePost() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Link (optional)</label>
+                <label className="block text-sm font-medium text-gray-700">{t("link_optional")}</label>
                 <input
                   name="link"
                   value={link}
@@ -92,7 +96,7 @@ export default function CreatePost() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">Image</label>
+                <label className="block text-sm font-medium text-gray-700">{t("image")}</label>
                 <input
                   type="file"
                   name="image"
@@ -109,8 +113,9 @@ export default function CreatePost() {
                 ) : (
                   <button
                     type="submit"
-                    className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                    Submit Post
+                    className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  >
+                    {t("submit_post")}
                   </button>
                 )}
               </div>

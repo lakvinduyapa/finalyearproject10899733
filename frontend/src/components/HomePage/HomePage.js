@@ -1,26 +1,33 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import HomeCategories from "./HomeCategories";
 import HomeProductTrending from "./HomeProductTrending";
 
-const offers = [
-  {
-    name: "Support Local Women",
-    description: "Discover handcrafted products made by Sri Lankan women entrepreneurs",
-    href: "#",
-  },
-  {
-    name: "Free Islandwide Delivery",
-    description: "Enjoy free delivery on orders above Rs. 3,000 anywhere in Sri Lanka",
-    href: "#",
-  },
-  {
-    name: "Discover Coupon Codes",
-    description: "Get up to 50% off your purchase with coupon codes – shop and support local talent",
-    href: "#",
-  },
-];
+const Example = () => {
+  const { t, i18n } = useTranslation();
 
-export default function Example() {
+  const isTamil = i18n.language === "ta";
+  const fontSizeClass = isTamil ? "text-sm" : "text-base";
+  const headingSizeClass = isTamil ? "text-3xl sm:text-4xl lg:text-5xl" : "text-4xl sm:text-5xl lg:text-6xl";
+
+  const offers = [
+    {
+      name: t("offer_support_local"),
+      description: t("offer_support_local_desc"),
+      href: "#",
+    },
+    {
+      name: t("offer_free_delivery"),
+      description: t("offer_free_delivery_desc"),
+      href: "#",
+    },
+    {
+      name: t("offer_coupon"),
+      description: t("offer_coupon_desc"),
+      href: "#",
+    },
+  ];
+
   return (
     <div className="bg-white">
       <main>
@@ -30,19 +37,18 @@ export default function Example() {
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:grid lg:grid-cols-2 lg:px-8">
               <div className="mx-auto max-w-2xl py-12 lg:max-w-none lg:py-24">
                 <div className="lg:pr-16">
-                  <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">
-                    Online Shopping Like Never Before
+                  <h1 className={`font-bold tracking-tight text-gray-900 ${headingSizeClass}`}>
+                    {t("hero_title")}
                   </h1>
-                  <p className="mt-4 text-xl text-gray-600">
-                    Leading Marketplace of Women Entrepreneurs of Sri Lanka.
-                    Explore our wide range of products, stay updated with the latest trends.
+                  <p className={`mt-4 ${fontSizeClass} text-gray-600`}>
+                    {t("hero_description")}
                   </p>
                   <div className="mt-6">
                     <a
                       href="/products"
                       className="inline-block rounded-md border border-transparent bg-white py-3 px-8 font-bold text-black hover:bg-indigo-700"
                     >
-                      Shop Now
+                      {t("shop_now")}
                     </a>
                   </div>
                 </div>
@@ -60,7 +66,7 @@ export default function Example() {
           </div>
         </div>
 
-        {/* ✅ Offers Section - moved below hero */}
+        {/* Offers Section */}
         <div className="bg-white">
           <div className="mx-auto max-w-7xl lg:px-8 py-3">
             <ul
@@ -73,8 +79,8 @@ export default function Example() {
                     href={offer.href}
                     className="flex-1 flex flex-col justify-center bg-white focus:z-10"
                   >
-                    <p className="text-medium text-gray-500">{offer.name}</p>
-                    <p className="font-semibold text-gray-900 text-sm">
+                    <p className={`text-medium text-gray-500 ${fontSizeClass}`}>{offer.name}</p>
+                    <p className={`font-semibold text-gray-900 ${fontSizeClass}`}>
                       {offer.description}
                     </p>
                   </a>
@@ -84,27 +90,27 @@ export default function Example() {
           </div>
         </div>
 
-        {/* Sale Banner */}
-        <div className="relative overflow-hidden">
+        {/* News Banner */}
+        <div className="relative overflow-hidden bg-gray-200">
           <section
             aria-labelledby="sale-heading"
             className="relative mx-auto flex max-w-7xl flex-col items-center px-4 pt-16 text-center sm:px-6 lg:px-8"
           >
-            <div className="mx-auto max-w-2xl lg:max-w-none">
+            <div className="mx-auto max-w-2xl lg:max-w-none pb-6">
               <h2
                 id="sale-heading"
-                className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl"
+                className={`font-bold tracking-tight text-gray-900 pb-2 ${headingSizeClass}`}
               >
-                Want to Enter the World of Women Entrepreneurship?
+                {t("sale_title")}
               </h2>
-              <p className="mx-auto mt-4 max-w-xl text-xl text-gray-600">
-                Visit Our Exclusive Newsfeed to access Workshops and Career Training Programs
+              <p className={`mx-auto mt-4 max-w-xl text-gray-600 ${fontSizeClass}`}>
+                {t("sale_description")}
               </p>
               <a
                 href="/newsfeed"
                 className="mt-6 inline-block w-full rounded-md border border-transparent bg-[#FC6DC5] py-3 px-8 font-medium text-white hover:bg-gray-800 sm:w-auto"
               >
-                Visit Newsfeed
+                {t("visit_newsfeed")}
               </a>
             </div>
           </section>
@@ -113,7 +119,6 @@ export default function Example() {
 
       {/* Product Sections */}
       <main>
-        {/* Categories */}
         <section
           aria-labelledby="category-heading"
           className="pt-24 sm:pt-32 xl:mx-auto xl:max-w-7xl xl:px-8"
@@ -123,21 +128,22 @@ export default function Example() {
               id="category-heading"
               className="text-2xl font-bold tracking-tight text-gray-900"
             >
-              Shop by Category
+              {t("shop_by_category")}
             </h2>
             <Link
               to="/all-categories"
               className="hidden text-medium font-semibold text-pink-600 hover:text-pink-500 sm:block"
             >
-              Browse all categories <span aria-hidden="true"> &rarr;</span>
+              {t("browse_all_categories")} <span aria-hidden="true"> &rarr;</span>
             </Link>
           </div>
           <HomeCategories />
         </section>
 
-        {/* Trending Products */}
         <HomeProductTrending />
       </main>
     </div>
   );
-}
+};
+
+export default Example;

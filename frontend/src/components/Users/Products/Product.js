@@ -6,6 +6,7 @@ import { addToCart } from "../../../redux/slices/cart/cartSlice";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
+import { useTranslation } from "react-i18next";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -17,6 +18,10 @@ function classNames(...classes) {
 export default function Product() {
   const dispatch = useDispatch();
   const { id } = useParams();
+  const { t, i18n } = useTranslation();
+  const isTamil = i18n.language === "ta";
+  const fontSize = isTamil ? "text-sm" : "";
+
 
   const { product, loading, error } = useSelector((state) => state.products);
 
@@ -24,9 +29,9 @@ export default function Product() {
     if (id) dispatch(fetchProductAction(id));
   }, [dispatch, id]);
 
-  if (loading) return <p className="text-center mt-8">Loading product...</p>;
-  if (error) return <p className="text-center text-red-500 mt-8">{error.message || "Product not found"}</p>;
-  if (!product?.product) return <p className="text-center mt-8">Product not found</p>;
+  if (loading) return <p className="text-center mt-8">{t("loading_product")}</p>;
+  if (error) return <p className="text-center text-red-500 mt-8">{error.message || t("product_not_found")}</p>;
+  if (!product?.product) return <p className="text-center mt-8">{t("product_not_found")}</p>;
 
   const item = product.product;
 
@@ -57,8 +62,8 @@ export default function Product() {
 
         {/* Product Details */}
         <div>
-          <h1 className="text-3xl font-bold mb-2">{item.name}</h1>
-          <p className="text-gray-600 mb-4">Rs. {item.price}</p>
+          <h1 className={`text-3xl font-bold mb-2 ${fontSize}`}>{item.name}</h1>
+          <p className={`text-gray-600 mb-4 ${fontSize}`}>Rs. {item.price}</p>
 
           {/* Average Rating */}
           <div className="flex items-center mb-4">
@@ -72,27 +77,27 @@ export default function Product() {
                 aria-hidden="true"
               />
             ))}
-            <p className="ml-2 text-sm text-gray-700">
-              {item.averageRating || "No ratings yet"}
+            <p className={`ml-2 text-sm text-gray-700 ${fontSize}`}>
+              {item.averageRating || t("no_ratings")}
             </p>
           </div>
 
           {/* Description */}
-          <p className="text-gray-700 mb-6">{item.description}</p>
+          <p className={`text-gray-700 mb-6 ${fontSize}`}>{item.description}</p>
 
           {/* Reviews Info */}
           <div className="mb-6">
-            <h3 className="text-sm font-semibold text-blue-600 mb-1">
-              <Link to={`/add-review/${item._id}`}>Leave a review</Link>
+            <h3 className={`text-sm font-semibold text-blue-600 mb-1 ${fontSize}`}>
+              <Link to={`/add-review/${item._id}`}>{t("leave_review")}</Link>
             </h3>
-            <p className="text-sm text-gray-500">
-              {item.totalReviews || 0} reviews
+            <p className={`text-sm text-gray-500 ${fontSize}`}>
+              {item.totalReviews || 0} {t("reviews")}
             </p>
           </div>
 
           {/* Inventory */}
-          <p className="text-sm text-green-700 mb-4">
-            Quantity left: {item.quantityleft}
+          <p className={`text-sm text-green-700 mb-4 ${fontSize}`}>
+            {t("quantity_left")}: {item.quantityleft}
           </p>
 
           {item.quantityleft > 0 ? (
@@ -108,33 +113,33 @@ export default function Product() {
                   })
                 )
               }
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded shadow"
+              className="bg-[#FC6DC5] text-black font-semibold hover:bg-[#FFB1E1] px-5 py-2 rounded shadow"
             >
-              Add to Cart
+              {t("add_to_cart")}
             </button>
           ) : (
-            <p className="text-red-500 font-semibold">Out of Stock</p>
+            <p className="text-red-500 font-semibold">{t("out_of_stock")}</p>
           )}
         </div>
       </div>
 
       {/* === Reviews Section === */}
       <div className="mt-10">
-        <h2 className="text-xl font-bold mb-4">Customer Reviews</h2>
+        <h2 className={`text-xl font-bold mb-4 ${fontSize}`}>{t("customer_reviews")}</h2>
         {item.reviews && item.reviews.length > 0 ? (
           <ul className="space-y-4">
             {item.reviews.map((review) => (
               <li key={review._id} className="border p-4 rounded-md shadow-sm">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-medium text-indigo-600">Rating:</span>
+                  <span className={`font-medium text-indigo-600 ${fontSize}`}>{t("rating")}:</span>
                   <span>{review.rating} ⭐</span>
                 </div>
-                <p className="text-gray-700">{review.reviewmsg}</p>
+                <p className={`text-gray-700 ${fontSize}`}>{review.reviewmsg}</p>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500">No reviews yet. Be the first to review!</p>
+          <p className={`text-gray-500 ${fontSize}`}>{t("no_reviews_yet")}</p>
         )}
       </div>
     </div>

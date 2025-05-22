@@ -34,6 +34,7 @@ import SellerDashboard from "./components/Seller/SellerDashboard";
 import AdminRoute from "./components/AuthRoute/AdminRoute";
 import SellerRoute from "./components/AuthRoute/SellerRoute";
 import ThanksForOrdering from "./components/Users/Products/ThanksForOrdering";
+import './i18n';
 
 
 

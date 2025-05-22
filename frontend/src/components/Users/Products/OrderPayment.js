@@ -3,14 +3,18 @@ import { useSelector, useDispatch } from "react-redux";
 import AddShippingAddress from "../Forms/AddShippingAddress";
 import axios from "axios";
 import baseURL from "../../../utils/baseURL";
+import { useTranslation } from "react-i18next";
 
 export default function OrderPayment() {
   const dispatch = useDispatch();
+  const { t, i18n } = useTranslation();
+  const isTamil = i18n.language === "ta";
+  const fontSizeClass = isTamil ? "text-sm" : "text-base";
+
   const cartItems = useSelector((state) => state.cart.cartItems);
   const userInfo = useSelector((state) => state.users.userAuth.userInfo);
   const shippingAddress = userInfo?.userFound?.ShippingAddress;
 
-  // Coupon state
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState(null);
@@ -30,14 +34,13 @@ export default function OrderPayment() {
       const { data } = await axios.get(`${baseURL}/coupons/validate/code?code=${couponCode}`);
       setAppliedCoupon(data.coupon);
     } catch (error) {
-      setCouponError(error?.response?.data?.message || "Invalid coupon");
+      setCouponError(error?.response?.data?.message || t("invalid_coupon"));
       setAppliedCoupon(null);
     }
   };
 
   const createOrderSubmitHandler = async (e) => {
     e.preventDefault();
-
     try {
       const config = {
         headers: {
@@ -68,7 +71,6 @@ export default function OrderPayment() {
     <div className="bg-gray-50">
       <main className="mx-auto max-w-7xl px-4 pt-16 pb-24 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:max-w-none">
-          <h1 className="sr-only">Checkout</h1>
           <div className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
             {/* Shipping Section */}
             <div>
@@ -79,7 +81,7 @@ export default function OrderPayment() {
 
             {/* Order Summary */}
             <div className="mt-10 lg:mt-0">
-              <h2 className="text-lg font-medium text-gray-900">Order summary</h2>
+              <h2 className={`text-lg font-medium text-gray-900 ${fontSizeClass}`}>{t("order_summary")}</h2>
               <div className="mt-4 rounded-lg border border-gray-200 bg-white shadow-sm">
                 <ul role="list" className="divide-y divide-gray-200">
                   {cartItems.map((product) => (
@@ -94,13 +96,13 @@ export default function OrderPayment() {
                       <div className="ml-6 flex flex-1 flex-col">
                         <div className="flex">
                           <div className="min-w-0 flex-1">
-                            <p className="text-xl text-gray-700 font-semibold">
+                            <p className={`text-xl text-gray-700 font-semibold ${fontSizeClass}`}>
                               {product.name}
                             </p>
                           </div>
                         </div>
                         <div className="flex flex-1 items-end justify-between pt-2">
-                          <p className="text-base font-medium text-gray-900 text-right w-full">
+                          <p className={`text-base font-medium text-gray-900 text-right w-full ${fontSizeClass}`}>
                             Rs. {product.discountedPrice} x {product.qty}
                           </p>
                         </div>
@@ -109,9 +111,10 @@ export default function OrderPayment() {
                   ))}
                 </ul>
 
+                {/* Coupon Code */}
                 <div className="px-4 sm:px-6 py-6 border-t border-gray-200">
-                  <label htmlFor="coupon" className="block text-sm font-medium text-gray-700 mb-2">
-                    Have a coupon?
+                  <label htmlFor="coupon" className={`block text-sm font-medium text-gray-700 mb-2 ${fontSizeClass}`}>
+                    {t("have_coupon")}
                   </label>
                   <div className="flex gap-2">
                     <input
@@ -119,19 +122,19 @@ export default function OrderPayment() {
                       id="coupon"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value)}
-                      placeholder="Enter code"
+                      placeholder={t("enter_coupon")}
                       className="flex-1 border px-3 py-2 rounded-md text-sm"
                     />
                     <button
                       onClick={applyCouponHandler}
                       className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm"
                     >
-                      Apply
+                      {t("apply")}
                     </button>
                   </div>
                   {appliedCoupon && (
                     <p className="mt-2 text-green-600 text-sm">
-                      Coupon "{appliedCoupon.code}" applied – {appliedCoupon.discount}% off
+                      {t("coupon_applied", { code: appliedCoupon.code, discount: appliedCoupon.discount })}
                     </p>
                   )}
                   {couponError && (
@@ -139,39 +142,39 @@ export default function OrderPayment() {
                   )}
                 </div>
 
+                {/* Summary */}
                 <dl className="space-y-6 border-t border-gray-200 py-6 px-4 sm:px-6">
                   <div className="flex items-center justify-between">
-                    <dt className="text-sm">Taxes</dt>
-                    <dd className="text-sm font-medium text-gray-900">Rs. 0.00</dd>
+                    <dt className={`text-sm ${fontSizeClass}`}>{t("taxes")}</dt>
+                    <dd className={`text-sm font-medium text-gray-900 ${fontSizeClass}`}>Rs. 0.00</dd>
                   </div>
                   <div className="flex items-center justify-between">
-                    <dt className="text-sm">Subtotal</dt>
-                    <dd className="text-sm font-medium text-gray-900">
-                      Rs. {calculateSubtotal()}
-                    </dd>
+                    <dt className={`text-sm ${fontSizeClass}`}>{t("subtotal")}</dt>
+                    <dd className={`text-sm font-medium text-gray-900 ${fontSizeClass}`}>Rs. {calculateSubtotal()}</dd>
                   </div>
                   {appliedCoupon && (
                     <div className="flex items-center justify-between">
-                      <dt className="text-sm">Discount ({appliedCoupon.discount}%)</dt>
-                      <dd className="text-sm font-medium text-green-700">
+                      <dt className={`text-sm ${fontSizeClass}`}>{t("discount", { percent: appliedCoupon.discount })}</dt>
+                      <dd className={`text-sm font-medium text-green-700 ${fontSizeClass}`}>
                         - Rs. {calculateSubtotal() - calculateDiscountedTotal()}
                       </dd>
                     </div>
                   )}
                   <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-                    <dt className="text-base font-medium">Total</dt>
-                    <dd className="text-base font-medium text-gray-900">
+                    <dt className={`text-base font-medium ${fontSizeClass}`}>{t("total")}</dt>
+                    <dd className={`text-base font-medium text-gray-900 ${fontSizeClass}`}>
                       Rs. {calculateDiscountedTotal()}
                     </dd>
                   </div>
                 </dl>
 
+                {/* Confirm Button */}
                 <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
                   <button
                     onClick={createOrderSubmitHandler}
                     className="w-full rounded-md border border-transparent bg-indigo-600 py-3 px-4 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                   >
-                    Confirm Payment - Rs. {calculateDiscountedTotal()}
+                    {t("confirm_payment")} - Rs. {calculateDiscountedTotal()}
                   </button>
                 </div>
               </div>

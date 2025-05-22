@@ -1,15 +1,30 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPostAction } from "../../redux/slices/posts/postSlices";
+import { useTranslation } from "react-i18next";
 
 export default function CreatePost() {
   const dispatch = useDispatch();
-  const [form, setForm] = useState({ title: "", description: "", link: "", image: null });
+  const { t, i18n } = useTranslation();
+  const isTamil = i18n.language === "ta";
+  const fontSizeClass = isTamil ? "text-sm" : "text-base";
+
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    link: "",
+    image: null,
+  });
+
   const { loading, error, isAdded } = useSelector((state) => state.posts);
   const user = useSelector((state) => state.users.userAuth.userInfo);
 
   if (!user?.userFound?.isAdmin && !user?.userFound?.isSeller) {
-    return <p className="text-center text-red-500 mt-6">Access Denied: Only Sellers and Admins can post.</p>;
+    return (
+      <p className="text-center text-red-500 mt-6">
+        {t("access_denied")}
+      </p>
+    );
   }
 
   const handleChange = (e) => {
@@ -28,16 +43,18 @@ export default function CreatePost() {
 
   return (
     <div className="max-w-xl mx-auto bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Create Newsfeed Post</h2>
+      <h2 className={`text-xl font-bold mb-4 ${fontSizeClass}`}>{t("create_post")}</h2>
       {error && <p className="text-red-500 text-sm mb-2">{error.message}</p>}
-      {isAdded && <p className="text-green-600 mb-2">Post added successfully!</p>}
+      {isAdded && (
+        <p className="text-green-600 mb-2">{t("post_success")}</p>
+      )}
       <form onSubmit={handleSubmit}>
         <input
           name="title"
           value={form.title}
           onChange={handleChange}
           className="w-full border p-2 rounded mb-3"
-          placeholder="Title"
+          placeholder={t("placeholder_title")}
           required
         />
         <textarea
@@ -45,7 +62,7 @@ export default function CreatePost() {
           value={form.description}
           onChange={handleChange}
           className="w-full border p-2 rounded mb-3"
-          placeholder="Description"
+          placeholder={t("placeholder_description")}
           rows={4}
           required
         />
@@ -54,7 +71,7 @@ export default function CreatePost() {
           value={form.link}
           onChange={handleChange}
           className="w-full border p-2 rounded mb-3"
-          placeholder="Link (optional)"
+          placeholder={t("placeholder_link")}
         />
         <input
           type="file"
@@ -68,7 +85,7 @@ export default function CreatePost() {
           disabled={loading}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          {loading ? "Posting..." : "Post"}
+          {loading ? t("posting") : t("post")}
         </button>
       </form>
     </div>

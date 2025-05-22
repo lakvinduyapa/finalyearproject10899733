@@ -1,124 +1,86 @@
 import { useEffect, useState } from "react";
-import DatePicker from "react-datepicker";
-
-import "react-datepicker/dist/react-datepicker.css";
-import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchCouponAction,
+  updateCouponAction,
+  resetCouponSuccess,
+} from "../../../redux/slices/coupons/couponsSlices";
+import { useParams, useNavigate } from "react-router-dom";
 import LoadingComponent from "../../LoadingComp/LoadingComponent";
 import ErrorMsg from "../../ErrorMsg/ErrorMsg";
 import SuccessMsg from "../../SuccessMsg/SuccessMsg";
 
 export default function UpdateCoupon() {
-  //---Fetch coupon ---
-  const { coupon, loading, error, isUpdated } = {};
-  //get the coupon
-  const { code } = useParams();
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { coupon, loading, error, isUpdated } = useSelector((state) => state.coupons);
 
-  //---handle form data---
   const [formData, setFormData] = useState({
-    code: coupon?.coupon?.code,
-    discount: coupon?.coupon?.discount,
+    code: "",
+    startDate: "",
+    endDate: "",
+    discount: "",
   });
 
-  //onHandleChange---
-  const onHandleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  useEffect(() => {
+    if (id) dispatch(fetchCouponAction(id));
+  }, [id, dispatch]);
+
+  useEffect(() => {
+    if (coupon) {
+      setFormData({
+        code: coupon.code || "",
+        startDate: coupon.startDate?.split("T")[0] || "",
+        endDate: coupon.endDate?.split("T")[0] || "",
+        discount: coupon.discount || "",
+      });
+    }
+  }, [coupon]);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-  //onHandleSubmit---
-  const onHandleSubmit = (e) => {
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    //reset
-    setFormData({
-      code: "",
-      discount: "",
-    });
+    dispatch(updateCouponAction({ id, ...formData }));
   };
-  return (
-    <>
-      {isUpdated && <SuccessMsg message="Coupon Updated successfully" />}
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Update Coupon
-        </h2>
-      </div>
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {error ? (
-            <ErrorMsg message={error?.message} />
-          ) : (
-            <form className="space-y-6" onSubmit={onHandleSubmit}>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {/* name */}
-                  Name
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="text"
-                    name="code"
-                    value={formData?.code}
-                    onChange={onHandleChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  {/* discount */}
-                  Discount (in %)
-                </label>
-                <div className="mt-1">
-                  <input
-                    name="discount"
-                    value={formData?.discount}
-                    onChange={onHandleChange}
-                    type="number"
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  />
-                </div>
-              </div>
-              {/* start date */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Start Date
-                </label>
-                <div className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                  <DatePicker
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
-                  />
-                </div>
-              </div>
 
-              {/* end date */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  End Date
-                </label>
-                <div className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                  <DatePicker
-                    selected={endDate}
-                    onChange={(date) => setEndDate(date)}
-                  />
-                </div>
-              </div>
-              <div>
-                {loading ? (
-                  <LoadingComponent />
-                ) : (
-                  <button
-                    type="submit"
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Update Coupon
-                  </button>
-                )}
-              </div>
-            </form>
-          )}
-        </div>
-      </div>
-    </>
+  useEffect(() => {
+    if (isUpdated) {
+      setTimeout(() => {
+        dispatch(resetCouponSuccess());
+        navigate("/admin/manage-coupon");
+      }, 2000);
+    }
+  }, [isUpdated, dispatch, navigate]);
+
+  return (
+    <div className="max-w-md mx-auto py-10">
+      <h2 className="text-2xl font-bold mb-4 text-center">Update Coupon</h2>
+      {loading && <LoadingComponent />}
+      {error && <ErrorMsg message={error.message} />}
+      {isUpdated && <SuccessMsg message="Coupon updated successfully!" />}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {["code", "startDate", "endDate", "discount"].map((field) => (
+          <div key={field}>
+            <label className="block mb-1 capitalize">{field}</label>
+            <input
+              type={field.includes("Date") ? "date" : field === "discount" ? "number" : "text"}
+              name={field}
+              value={formData[field]}
+              onChange={handleChange}
+              required
+              className="w-full border rounded px-3 py-2"
+            />
+          </div>
+        ))}
+        <button type="submit" className="w-full bg-indigo-600 text-white py-2 rounded">
+          Update Coupon
+        </button>
+      </form>
+    </div>
   );
 }

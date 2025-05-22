@@ -16,6 +16,8 @@ import {
   XMarkIcon,
   PencilSquareIcon,
 } from "@heroicons/react/24/outline";
+import { useSelector } from "react-redux";
+import dayjs from "dayjs";
 import logo from "../Navbar/logo3.png";
 const ordersLinks = [
   {
@@ -58,7 +60,7 @@ const ordersLinks = [
     ),
   },
   {
-    name: "Customers",
+    name: "Users",
     href: "customers",
     icon: () => (
       <svg
@@ -173,6 +175,17 @@ const postLinks = [
 
 export default function Example() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { userInfo } = useSelector((state) => state.users.userAuth);
+
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+};
+
+const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.trim() || "Admin";
+
 
   return (
     <>
@@ -460,8 +473,9 @@ export default function Example() {
                             alt=""
                           />
                           <h1 className="ml-3 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:leading-9">
-                            Good morning, Emilia Birch
+                            {getGreeting()}, {adminName}
                           </h1>
+
                         </div>
                         <dl className="mt-6 flex flex-col sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap">
                           <dd className="flex items-center text-sm font-medium capitalize text-gray-500 sm:mr-6">
@@ -480,38 +494,7 @@ export default function Example() {
                             </svg>
                             Role: Admin
                           </dd>
-                          {/* Date Joined */}
-                          <dd className="mt-3 flex items-center text-sm font-medium capitalize text-gray-500 sm:mr-6 sm:mt-0">
-                            <svg
-                              className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            Date Joined: 12/12/2020
-                          </dd>
-                          {/* email */}
-                          <dd className="mt-3 flex items-center text-sm font-medium  text-gray-500 sm:mr-6 sm:mt-0">
-                            <svg
-                              className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
-                            </svg>
-                            admin@gmail.com
-                          </dd>
+                          
                         </dl>
                       </div>
                     </div>

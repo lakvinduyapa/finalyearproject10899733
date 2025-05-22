@@ -3723,6 +3723,11 @@ date-fns@^2.24.0:
   resolved "https://registry.npmjs.org/date-fns/-/date-fns-2.29.3.tgz"
   integrity sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==
 
+dayjs@^1.11.13:
+  version "1.11.13"
+  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.11.13.tgz"
+  integrity sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==
+
 debug@^2.6.0:
   version "2.6.9"
   resolved "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz"

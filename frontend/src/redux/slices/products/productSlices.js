@@ -114,9 +114,24 @@ export const deleteProductAction = createAsyncThunk(
     }
   }
 );
+//create review action
+export const createReviewAction = createAsyncThunk(
+  "review/create",
+  async ({ productId, reviewData }, { rejectWithValue, getState }) => {
+    try {
+      const token = getState()?.users?.userAuth?.userInfo?.token;
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      const { data } = await axios.post(`${baseURL}/reviews/${productId}`, reviewData, config);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data?.message || error.message);
+    }
+  }
+);
 
 
-// ✅ Slice
+
+//  Slice
 const productSlice = createSlice({
   name: "products",
   initialState,

@@ -79,7 +79,7 @@ export default function Product() {
           {/* Description */}
           <p className="text-gray-700 mb-6">{item.description}</p>
 
-          {/* Reviews */}
+          {/* Reviews Info */}
           <div className="mb-6">
             <h3 className="text-sm font-semibold text-blue-600 mb-1">
               <Link to={`/add-review/${item._id}`}>Leave a review</Link>
@@ -94,6 +94,26 @@ export default function Product() {
             Quantity left: {item.quantityleft}
           </p>
         </div>
+      </div>
+
+      {/* === Reviews Section === */}
+      <div className="mt-10">
+        <h2 className="text-xl font-bold mb-4">Customer Reviews</h2>
+        {item.reviews && item.reviews.length > 0 ? (
+          <ul className="space-y-4">
+            {item.reviews.map((review) => (
+              <li key={review._id} className="border p-4 rounded-md shadow-sm">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-medium text-indigo-600">Rating:</span>
+                  <span>{review.rating} ⭐</span>
+                </div>
+                <p className="text-gray-700">{review.reviewmsg}</p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-500">No reviews yet. Be the first to review!</p>
+        )}
       </div>
     </div>
   );

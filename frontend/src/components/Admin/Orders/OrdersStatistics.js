@@ -1,152 +1,80 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOrderStatsAction } from "../../../redux/slices/orders/orderSlice";
+
 export default function OrdersStats() {
+  const dispatch = useDispatch();
+
+  const { stats, statsLoading, statsError } = useSelector((state) => state.orders);
+
+  useEffect(() => {
+    dispatch(fetchOrderStatsAction());
+  }, [dispatch]);
+
+  const orderStats = stats?.orderstats?.[0] || {};
+  const todaySales = stats?.saleToday?.[0]?.totalSales || 0;
+
   return (
-    <div>
-      <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {/* stat 1 */}
-        <div className="relative overflow-hidden rounded-lg bg-pink-600 px-4 pt-5 pb-12 shadow sm:px-6 sm:pt-6">
-          <dt>
-            <div className="absolute rounded-md bg-indigo-500 p-3">
-              <svg
-                className="h-6 w-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
-              </svg>
-            </div>
-            <p className="ml-16 truncate text-sm font-medium text-gray-500">
-              Order Pending
-            </p>
-          </dt>
-          <dd className="ml-16 flex items-baseline pb-6 sm:pb-7">
-            <p className="text-2xl font-semibold text-gray-900">300</p>
-
-            <div className="absolute inset-x-0 bottom-0 bg-pink-900 px-4 py-4 sm:px-6">
-              <div className="text-sm">
-                <a
-                  href="#"
-                  className="font-medium text-indigo-600 hover:text-indigo-500">
-                  {" "}
-                  View all
-                </a>
+    <div className="mt-5">
+      {statsLoading ? (
+        <p>Loading statistics...</p>
+      ) : statsError ? (
+        <p className="text-red-500">{statsError}</p>
+      ) : (
+        <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Total Sales */}
+          <div className="relative overflow-hidden rounded-lg bg-green-600 px-4 pt-5 pb-12 shadow sm:px-6 sm:pt-6">
+            <dt>
+              <div className="absolute rounded-md bg-white p-3">
+                💰
               </div>
-            </div>
-          </dd>
-        </div>
-        {/* stat 2 */}
-        <div className="relative overflow-hidden rounded-lg bg-pink-600 px-4 pt-5 pb-12 shadow sm:px-6 sm:pt-6">
-          <dt>
-            <div className="absolute rounded-md bg-indigo-500 p-3">
-              <svg
-                className="h-6 w-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
-              </svg>
-            </div>
-            <p className="ml-16 truncate text-sm font-medium text-gray-500">
-              Order Cancel
-            </p>
-          </dt>
-          <dd className="ml-16 flex items-baseline pb-6 sm:pb-7">
-            <p className="text-2xl font-semibold text-gray-900">300</p>
+              <p className="ml-16 truncate text-sm font-medium text-white">Total Sales</p>
+            </dt>
+            <dd className="ml-16 text-2xl font-semibold text-white">
+              Rs. {orderStats?.totalSales?.toFixed(2) || 0}
+            </dd>
+          </div>
 
-            <div className="absolute inset-x-0 bottom-0 bg-pink-900 px-4 py-4 sm:px-6">
-              <div className="text-sm">
-                <a
-                  href="#"
-                  className="font-medium text-indigo-600 hover:text-indigo-500">
-                  {" "}
-                  View all
-                </a>
+          {/* Average Sale */}
+          <div className="relative overflow-hidden rounded-lg bg-blue-600 px-4 pt-5 pb-12 shadow sm:px-6 sm:pt-6">
+            <dt>
+              <div className="absolute rounded-md bg-white p-3">
+                📊
               </div>
-            </div>
-          </dd>
-        </div>
-        {/* stat 3 */}
-        <div className="relative overflow-hidden rounded-lg bg-pink-600 px-4 pt-5 pb-12 shadow sm:px-6 sm:pt-6">
-          <dt>
-            <div className="absolute rounded-md bg-indigo-500 p-3">
-              <svg
-                className="h-6 w-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
-              </svg>
-            </div>
-            <p className="ml-16 truncate text-sm font-medium text-gray-500">
-              Order Process
-            </p>
-          </dt>
-          <dd className="ml-16 flex items-baseline pb-6 sm:pb-7">
-            <p className="text-2xl font-semibold text-gray-900">300</p>
+              <p className="ml-16 truncate text-sm font-medium text-white">Average Sale</p>
+            </dt>
+            <dd className="ml-16 text-2xl font-semibold text-white">
+              Rs. {orderStats?.averageSale?.toFixed(2) || 0}
+            </dd>
+          </div>
 
-            <div className="absolute inset-x-0 bottom-0 bg-pink-900 px-4 py-4 sm:px-6">
-              <div className="text-sm">
-                <a
-                  href="#"
-                  className="font-medium text-indigo-600 hover:text-indigo-500">
-                  {" "}
-                  View all
-                </a>
+          {/* Minimum Sale */}
+          <div className="relative overflow-hidden rounded-lg bg-pink-600 px-4 pt-5 pb-12 shadow sm:px-6 sm:pt-6">
+            <dt>
+              <div className="absolute rounded-md bg-white p-3">
+                🧾
               </div>
-            </div>
-          </dd>
-        </div>
-        {/* total income */}
-        <div className="relative overflow-hidden rounded-lg bg-pink-600 px-4 pt-5 pb-12 shadow sm:px-6 sm:pt-6">
-          <dt>
-            <div className="absolute rounded-md bg-indigo-500 p-3">
-              <svg
-                className="h-6 w-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
-              </svg>
-            </div>
-            <p className="ml-16 truncate text-sm font-medium text-gray-500">
-              Total Income
-            </p>
-          </dt>
-          <dd className="ml-16 flex items-baseline pb-6 sm:pb-7">
-            <p className="text-2xl font-semibold text-gray-900">300</p>
+              <p className="ml-16 truncate text-sm font-medium text-white">Min Sale</p>
+            </dt>
+            <dd className="ml-16 text-2xl font-semibold text-white">
+              Rs. {orderStats?.minimumSale?.toFixed(2) || 0}
+            </dd>
+          </div>
 
-            <div className="absolute inset-x-0 bottom-0 bg-pink-900 px-4 py-4 sm:px-6">
-              <div className="text-sm">
-                <a
-                  href="#"
-                  className="font-medium text-indigo-600 hover:text-indigo-500">
-                  {" "}
-                  View all
-                </a>
+          {/* Today's Sales */}
+          <div className="relative overflow-hidden rounded-lg bg-yellow-600 px-4 pt-5 pb-12 shadow sm:px-6 sm:pt-6">
+            <dt>
+              <div className="absolute rounded-md bg-white p-3">
+                📅
               </div>
-            </div>
-          </dd>
-        </div>
-      </dl>
+              <p className="ml-16 truncate text-sm font-medium text-white">Sales Today</p>
+            </dt>
+            <dd className="ml-16 text-2xl font-semibold text-white">
+              Rs. {todaySales?.toFixed(2)}
+            </dd>
+          </div>
+        </dl>
+      )}
     </div>
   );
 }

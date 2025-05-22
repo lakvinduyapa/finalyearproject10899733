@@ -32,6 +32,9 @@ import Newsfeed from "./components/Newsfeed/Newsfeed";
 import SellerDashboard from "./components/Seller/SellerDashboard";
 import AdminRoute from "./components/AuthRoute/AdminRoute";
 import SellerRoute from "./components/AuthRoute/SellerRoute";
+import ThanksForOrdering from "./components/Users/Products/ThanksForOrdering";
+
+
 
 const App = () => {
   return (
@@ -94,6 +97,7 @@ const App = () => {
         {/* shopping cart */}
         <Route path="/shopping-cart" element={<ShoppingCart />} />
         <Route path="/order-payment" element={<OrderPayment />} />
+        <Route path="/success" element={<ThanksForOrdering />} />
         {/* users */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegisterForm />} />

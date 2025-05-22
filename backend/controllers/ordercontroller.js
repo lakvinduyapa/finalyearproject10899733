@@ -50,7 +50,7 @@ export const createordercontroller = asyncHandler(async (req, res) => {
       qty: item.qty,
       price: product.price,
       product: product._id,
-      seller: product.seller,   // 🔥 Add seller ID here
+      seller: product.seller, 
     };
   });
 
@@ -98,7 +98,7 @@ export const createordercontroller = asyncHandler(async (req, res) => {
       orderId: JSON.stringify(order?._id),
     },
     mode: "payment",
-    success_url: "http://localhost:4000/success",
+    success_url: "http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}",
     cancel_url: "http://localhost:4000/cancel",
   });
 
@@ -139,6 +139,27 @@ export const updateordercontroller = asyncHandler(async(req,res)=>{
     updatedorder,
   });
 });
+
+export const getStripeSuccessOrderController = asyncHandler(async (req, res) => {
+  const sessionId = req.params.sessionId;
+
+  // Retrieve session from Stripe
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  const orderId = JSON.parse(session.metadata.orderId);
+
+  // Fetch the actual order
+  const order = await Order.findById(orderId).populate("orderItems.product");
+
+  if (!order) {
+    return res.status(404).json({ error: "Order not found" });
+  }
+
+  res.status(200).json({
+    success: true,
+    order,
+  });
+});
+
 
 export const getorderstatscontroller = asyncHandler(async(req,res) =>{
 

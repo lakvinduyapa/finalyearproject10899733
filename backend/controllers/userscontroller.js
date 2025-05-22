@@ -63,15 +63,23 @@ export const loginusercontroller = asyncHandler(async (req,res) => {
    }
 });
 
-export const getUserProfilecontroller = asyncHandler(async (req,res) =>{
-   const user=await User.findById(req.userAuthId).populate("orders");
-   res.json({
-      status:"success",
-      message:"User Profile fetched successfully",
-      user,
-   });
+export const getUserProfilecontroller = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.userAuthId)
+    .populate({
+      path: "orders",
+      populate: {
+        path: "orderItems.product",
+        select: "name price discountedPrice images", // choose only needed fields
+      },
+    });
 
+  res.json({
+    status: "success",
+    message: "User Profile fetched successfully",
+    user,
+  });
 });
+
 
 export const updateShippingAddresscontroller = asyncHandler(async(req,res)=>{
    const{addressline1, addressline2,city,province,postalcode,country}=req.body;
@@ -96,3 +104,11 @@ res.json({
    user,
 });
 });
+
+export const getAllUsersController = async (req, res) => {
+  const users = await User.find().select("firstname lastname email isAdmin isSeller createdAt");
+  res.status(200).json({
+    success: true,
+    users,
+  });
+};

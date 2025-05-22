@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductsAction } from "../../../redux/slices/products/productSlices";
 import { fetchCategoriesAction } from "../../../redux/slices/categories/categoriesSlice";
+import { addToCart } from "../../../redux/slices/cart/cartSlice"; 
 import { Link } from "react-router-dom";
 
 export default function ProductsPage() {
@@ -60,33 +61,29 @@ export default function ProductsPage() {
         <aside className="w-64 border-r pr-4">
           <h2 className="text-lg font-semibold mb-4">Filters</h2>
 
-          {/* Category Filter */}
           <div className="mb-6">
             <h3 className="font-medium mb-2">By Category</h3>
             <ul className="space-y-1">
               <li
                 onClick={() => setSelectedCategory("")}
-                className={`cursor-pointer ${selectedCategory === "" ? "font-bold text-blue-600" : ""}`}
-              >
+                className={`cursor-pointer ${selectedCategory === "" ? "font-bold text-blue-600" : ""}`}>
                 All
               </li>
               {categories?.map((cat) => (
                 <li
                   key={cat._id}
                   onClick={() => setSelectedCategory(cat.name)}
-                  className={`cursor-pointer ${selectedCategory === cat.name ? "font-bold text-blue-600" : ""}`}
-                >
+                  className={`cursor-pointer ${selectedCategory === cat.name ? "font-bold text-blue-600" : ""}`}>
                   {cat.name}
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Price Filter */}
           <div className="mb-6">
             <h3 className="font-medium mb-2">By Price</h3>
             <ul className="space-y-1">
-              {[ 
+              {[
                 { label: "All", value: "" },
                 { label: "Below Rs. 1000", value: "0-1000" },
                 { label: "Rs. 1000 - 5000", value: "1000-5000" },
@@ -96,22 +93,19 @@ export default function ProductsPage() {
                 <li
                   key={range.value}
                   onClick={() => setPriceRange(range.value)}
-                  className={`cursor-pointer ${priceRange === range.value ? "font-bold text-blue-600" : ""}`}
-                >
+                  className={`cursor-pointer ${priceRange === range.value ? "font-bold text-blue-600" : ""}`}>
                   {range.label}
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Sort Options */}
           <div className="mb-6">
             <h3 className="font-medium mb-2">Sort By</h3>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full border px-2 py-1 rounded"
-            >
+              className="w-full border px-2 py-1 rounded">
               <option value="">-- Select --</option>
               <option value="priceLow">Price: Low to High</option>
               <option value="priceHigh">Price: High to Low</option>
@@ -120,7 +114,6 @@ export default function ProductsPage() {
             </select>
           </div>
 
-          {/* Clear Filters Button */}
           <div className="mb-6 flex justify-end">
             <button
               onClick={() => {
@@ -129,8 +122,7 @@ export default function ProductsPage() {
                 setPriceRange("");
                 setSortBy("");
               }}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm rounded shadow"
-            >
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm rounded shadow">
               Clear Filters
             </button>
           </div>
@@ -154,6 +146,21 @@ export default function ProductsPage() {
                   <h3 className="mt-2 font-semibold text-lg">{product.name}</h3>
                   <p className="text-gray-600">Rs. {product.price}</p>
                 </Link>
+                <button
+                  onClick={() =>
+                    dispatch(
+                      addToCart({
+                        _id: product._id,
+                        name: product.name,
+                        imageSrc: product.images?.[0],
+                        discountedPrice: product.price,
+                        qtyLeft: product.quantityleft,
+                      })
+                    )
+                  }
+                  className="mt-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                  Add to Cart
+                </button>
               </div>
             ))
           )}

@@ -148,3 +148,18 @@ export const deleteproductcontroller = asyncHandler(async(req,res)=> {
         message:"Product deleted successfully",
     });
 });
+
+// Fetch latest products 
+export const getLatestProductsController = asyncHandler(async (req, res) => {
+  const latestProducts = await Product.find()
+    .sort({ createdAt: -1 })
+    .limit(4)
+    .populate("reviews");
+
+  res.json({
+    status: "success",
+    message: "Latest products fetched successfully",
+    products: latestProducts,
+  });
+});
+

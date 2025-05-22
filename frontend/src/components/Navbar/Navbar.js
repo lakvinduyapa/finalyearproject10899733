@@ -123,7 +123,7 @@ export default function Navbar() {
           <div className="bg-[#FFB1E1]">
             <div className="relative mx-auto flex h-10 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
               <p className="absolute left-1/2 transform -translate-x-1/2 text-sm font-medium text-black">
-                Register to Get a 10% Discount
+                Use code FLASH2025 - to get 10% off on you Purchase
               </p>
               <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
                 {!isLoggedIn ? (

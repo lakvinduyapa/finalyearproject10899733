@@ -8,6 +8,7 @@ import AddProduct from "./components/Admin/Products/AddProduct";
 import RegisterForm from "./components/Users/Forms/RegisterForm";
 import HomePage from "./components/HomePage/HomePage";
 import Navbar from "./components/Navbar/Navbar";
+import Footer from "./components/Footer/Footer";
 import OrderHistory from "./components/Admin/Orders/ManageOrders";
 import OrderPayment from "./components/Users/Products/OrderPayment";
 import ManageCategories from "./components/Admin/Categories/ManageCategories";
@@ -36,11 +37,12 @@ import ThanksForOrdering from "./components/Users/Products/ThanksForOrdering";
 
 
 
+
 const App = () => {
   return (
     <BrowserRouter>
       <Navbar />
-      {/* hide navbar if admin */}
+
       <Routes>
         {/* admin route - protected */}
         <Route path="admin" element={
@@ -104,7 +106,11 @@ const App = () => {
         <Route path="/customer-profile" element={<CustomerProfile />} />
         {/* Newsfeed */}
         <Route path="/newsfeed" element={<Newsfeed />} />
+        {/* Categories */}
+        <Route path="/all-categories" element={<AllCategories />} />
+
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 };

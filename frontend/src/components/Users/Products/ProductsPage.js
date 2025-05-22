@@ -2,23 +2,32 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductsAction } from "../../../redux/slices/products/productSlices";
 import { fetchCategoriesAction } from "../../../redux/slices/categories/categoriesSlice";
-import { addToCart } from "../../../redux/slices/cart/cartSlice"; 
-import { Link } from "react-router-dom";
+import { addToCart } from "../../../redux/slices/cart/cartSlice";
+import { Link, useSearchParams } from "react-router-dom";
 
 export default function ProductsPage() {
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.products);
   const { categories } = useSelector((state) => state.categories);
 
+  const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get("category") || "";
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [priceRange, setPriceRange] = useState("");
   const [sortBy, setSortBy] = useState("");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
     dispatch(fetchProductsAction());
     dispatch(fetchCategoriesAction());
   }, [dispatch]);
+
+  // If category in URL changes while component is mounted
+  useEffect(() => {
+    setSelectedCategory(searchParams.get("category") || "");
+  }, [searchParams]);
 
   const priceFilterFunction = (product) => {
     if (!priceRange) return true;
@@ -29,8 +38,12 @@ export default function ProductsPage() {
   const filteredProducts = Array.isArray(products?.products)
     ? products.products
         .filter((product) => {
-          const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase());
-          const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
+          const matchesSearch = product.name
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase());
+          const matchesCategory = selectedCategory
+            ? product.category === selectedCategory
+            : true;
           const matchesPrice = priceFilterFunction(product);
           return matchesSearch && matchesCategory && matchesPrice;
         })
@@ -50,83 +63,44 @@ export default function ProductsPage() {
         <input
           type="text"
           placeholder="Search Products..."
-          className="border border-gray-300 px-4 py-2 rounded shadow-sm w-64"
+          className="border border-gray-300 px-4 py-2 rounded shadow-sm w-64 max-sm:w-full"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
+      {/* Mobile Filter Toggle Button */}
+      <div className="sm:hidden mb-4">
+        <button
+          className="bg-gray-200 px-4 py-2 rounded shadow"
+          onClick={() => setShowMobileFilters(true)}
+        >
+          Show Filters
+        </button>
+      </div>
+
       <div className="flex gap-8">
-        {/* Sidebar */}
-        <aside className="w-64 border-r pr-4">
-          <h2 className="text-lg font-semibold mb-4">Filters</h2>
-
-          <div className="mb-6">
-            <h3 className="font-medium mb-2">By Category</h3>
-            <ul className="space-y-1">
-              <li
-                onClick={() => setSelectedCategory("")}
-                className={`cursor-pointer ${selectedCategory === "" ? "font-bold text-blue-600" : ""}`}>
-                All
-              </li>
-              {categories?.map((cat) => (
-                <li
-                  key={cat._id}
-                  onClick={() => setSelectedCategory(cat.name)}
-                  className={`cursor-pointer ${selectedCategory === cat.name ? "font-bold text-blue-600" : ""}`}>
-                  {cat.name}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mb-6">
-            <h3 className="font-medium mb-2">By Price</h3>
-            <ul className="space-y-1">
-              {[
-                { label: "All", value: "" },
-                { label: "Below Rs. 1000", value: "0-1000" },
-                { label: "Rs. 1000 - 5000", value: "1000-5000" },
-                { label: "Rs. 5000 - 10,000", value: "5000-10000" },
-                { label: "Above Rs. 10,000", value: "10000-1000000" },
-              ].map((range) => (
-                <li
-                  key={range.value}
-                  onClick={() => setPriceRange(range.value)}
-                  className={`cursor-pointer ${priceRange === range.value ? "font-bold text-blue-600" : ""}`}>
-                  {range.label}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mb-6">
-            <h3 className="font-medium mb-2">Sort By</h3>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full border px-2 py-1 rounded">
-              <option value="">-- Select --</option>
-              <option value="priceLow">Price: Low to High</option>
-              <option value="priceHigh">Price: High to Low</option>
-              <option value="ratingHigh">Rating: High to Low</option>
-              <option value="ratingLow">Rating: Low to High</option>
-            </select>
-          </div>
-
-          <div className="mb-6 flex justify-end">
-            <button
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedCategory("");
-                setPriceRange("");
-                setSortBy("");
-              }}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm rounded shadow">
-              Clear Filters
-            </button>
-          </div>
+        {/* Sidebar Filters */}
+        <aside className="hidden sm:block w-64 border-r pr-4">
+          <Filters />
         </aside>
+
+        {/* Mobile Sidebar Overlay */}
+        {showMobileFilters && (
+          <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex">
+            <div className="bg-white w-64 p-4 overflow-y-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold">Filters</h2>
+                <button onClick={() => setShowMobileFilters(false)}>❌</button>
+              </div>
+              <Filters />
+            </div>
+            <div
+              className="flex-1"
+              onClick={() => setShowMobileFilters(false)}
+            ></div>
+          </div>
+        )}
 
         {/* Product Grid */}
         <section className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -158,7 +132,8 @@ export default function ProductsPage() {
                       })
                     )
                   }
-                  className="mt-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                  className="mt-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                >
                   Add to Cart
                 </button>
               </div>
@@ -168,4 +143,88 @@ export default function ProductsPage() {
       </div>
     </div>
   );
+
+  // Filter Component
+  function Filters() {
+    return (
+      <>
+        <div className="mb-6">
+          <h3 className="font-medium mb-2">By Category</h3>
+          <ul className="space-y-1">
+            <li
+              onClick={() => setSelectedCategory("")}
+              className={`cursor-pointer ${
+                selectedCategory === "" ? "font-bold text-blue-600" : ""
+              }`}
+            >
+              All
+            </li>
+            {categories?.map((cat) => (
+              <li
+                key={cat._id}
+                onClick={() => setSelectedCategory(cat.name)}
+                className={`cursor-pointer ${
+                  selectedCategory === cat.name ? "font-bold text-blue-600" : ""
+                }`}
+              >
+                {cat.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="font-medium mb-2">By Price</h3>
+          <ul className="space-y-1">
+            {[
+              { label: "All", value: "" },
+              { label: "Below Rs. 1000", value: "0-1000" },
+              { label: "Rs. 1000 - 5000", value: "1000-5000" },
+              { label: "Rs. 5000 - 10,000", value: "5000-10000" },
+              { label: "Above Rs. 10,000", value: "10000-1000000" },
+            ].map((range) => (
+              <li
+                key={range.value}
+                onClick={() => setPriceRange(range.value)}
+                className={`cursor-pointer ${
+                  priceRange === range.value ? "font-bold text-blue-600" : ""
+                }`}
+              >
+                {range.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="font-medium mb-2">Sort By</h3>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="w-full border px-2 py-1 rounded"
+          >
+            <option value="">-- Select --</option>
+            <option value="priceLow">Price: Low to High</option>
+            <option value="priceHigh">Price: High to Low</option>
+            <option value="ratingHigh">Rating: High to Low</option>
+            <option value="ratingLow">Rating: Low to High</option>
+          </select>
+        </div>
+
+        <div className="mb-6 flex justify-end">
+          <button
+            onClick={() => {
+              setSearchTerm("");
+              setSelectedCategory("");
+              setPriceRange("");
+              setSortBy("");
+            }}
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm rounded shadow"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </>
+    );
+  }
 }

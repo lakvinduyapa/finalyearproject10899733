@@ -15,6 +15,7 @@ const initialState = {
   isAdded: false,
   isUpdated: false,
   isDelete: false,
+  latestProducts: [],
 };
 
 // ✅ Create Product Action (accepts FormData directly)
@@ -129,7 +130,18 @@ export const createReviewAction = createAsyncThunk(
   }
 );
 
-
+//fetch latest products
+export const fetchLatestProductsAction = createAsyncThunk(
+  "products/fetchLatest",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`${baseURL}/products/latest`);
+      return data.products;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 //  Slice
 const productSlice = createSlice({
@@ -211,7 +223,7 @@ builder.addCase(deleteProductAction.pending, (state) => {
 builder.addCase(deleteProductAction.fulfilled, (state, action) => {
   state.loading = false;
   state.isDelete = true;
-  // Optionally remove product from list
+  
   state.products = state.products.filter(
     (prod) => prod._id !== action.meta.arg
   );
@@ -220,6 +232,20 @@ builder.addCase(deleteProductAction.rejected, (state, action) => {
   state.loading = false;
   state.error = action.payload;
 });
+
+//fetch latest product
+builder.addCase(fetchLatestProductsAction.pending, (state) => {
+  state.loading = true;
+});
+builder.addCase(fetchLatestProductsAction.fulfilled, (state, action) => {
+  state.loading = false;
+  state.latestProducts = action.payload;
+});
+builder.addCase(fetchLatestProductsAction.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload;
+});
+
 
   },
 });

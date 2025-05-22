@@ -189,7 +189,7 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
 
   return (
     <>
-      <div className="min-h-full">
+      <div className="flex h-screen overflow-hidden">
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"
@@ -442,7 +442,7 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
         </div> 
        
 
-        <div className="flex flex-1 flex-col lg:pl-64">
+        <div className="flex-1 flex flex-col overflow-y-auto lg:pl-64">
           <div className="flex h-16 flex-shrink-0 border-b border-gray-200 bg-white lg:border-none">
             <button
               type="button"
@@ -499,18 +499,6 @@ const adminName = `${userInfo?.firstname || ""} ${userInfo?.lastname || ""}`.tri
                       </div>
                     </div>
                   </div>
-                  {/* <div className="mt-6 flex space-x-3 md:mt-0 md:ml-4">
-                    <button
-                      type="button"
-                      className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
-                      Add money
-                    </button>
-                    <button
-                      type="button"
-                      className="inline-flex items-center rounded-md border border-transparent bg-cyan-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
-                      Send money
-                    </button>
-                  </div> */}
                 </div>
               </div>
             </div>

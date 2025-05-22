@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import AddShippingAddress from "../Forms/AddShippingAddress";
 import axios from "axios";
@@ -9,8 +10,30 @@ export default function OrderPayment() {
   const userInfo = useSelector((state) => state.users.userAuth.userInfo);
   const shippingAddress = userInfo?.userFound?.ShippingAddress;
 
-  const calculateTotalDiscountedPrice = () =>
+  // Coupon state
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState(null);
+
+  const calculateSubtotal = () =>
     cartItems.reduce((acc, item) => acc + item.qty * item.discountedPrice, 0);
+
+  const calculateDiscountedTotal = () => {
+    const subtotal = calculateSubtotal();
+    const discount = appliedCoupon?.discount || 0;
+    return Math.round(subtotal * ((100 - discount) / 100));
+  };
+
+  const applyCouponHandler = async () => {
+    setCouponError(null);
+    try {
+      const { data } = await axios.get(`${baseURL}/coupons/validate/code?code=${couponCode}`);
+      setAppliedCoupon(data.coupon);
+    } catch (error) {
+      setCouponError(error?.response?.data?.message || "Invalid coupon");
+      setAppliedCoupon(null);
+    }
+  };
 
   const createOrderSubmitHandler = async (e) => {
     e.preventDefault();
@@ -27,7 +50,8 @@ export default function OrderPayment() {
         {
           orderItems: cartItems,
           shippingAddress,
-          totalPrice: calculateTotalDiscountedPrice(),
+          totalPrice: calculateDiscountedTotal(),
+          appliedCoupon: appliedCoupon?.code || null,
         },
         config
       );
@@ -85,15 +109,59 @@ export default function OrderPayment() {
                   ))}
                 </ul>
 
+                <div className="px-4 sm:px-6 py-6 border-t border-gray-200">
+                  <label htmlFor="coupon" className="block text-sm font-medium text-gray-700 mb-2">
+                    Have a coupon?
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      id="coupon"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      placeholder="Enter code"
+                      className="flex-1 border px-3 py-2 rounded-md text-sm"
+                    />
+                    <button
+                      onClick={applyCouponHandler}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {appliedCoupon && (
+                    <p className="mt-2 text-green-600 text-sm">
+                      Coupon "{appliedCoupon.code}" applied – {appliedCoupon.discount}% off
+                    </p>
+                  )}
+                  {couponError && (
+                    <p className="mt-2 text-red-600 text-sm">{couponError}</p>
+                  )}
+                </div>
+
                 <dl className="space-y-6 border-t border-gray-200 py-6 px-4 sm:px-6">
                   <div className="flex items-center justify-between">
                     <dt className="text-sm">Taxes</dt>
                     <dd className="text-sm font-medium text-gray-900">Rs. 0.00</dd>
                   </div>
-                  <div className="flex items-center justify-between border-t border-gray-200 pt-6">
-                    <dt className="text-base font-medium">Sub Total</dt>
+                  <div className="flex items-center justify-between">
+                    <dt className="text-sm">Subtotal</dt>
+                    <dd className="text-sm font-medium text-gray-900">
+                      Rs. {calculateSubtotal()}
+                    </dd>
+                  </div>
+                  {appliedCoupon && (
+                    <div className="flex items-center justify-between">
+                      <dt className="text-sm">Discount ({appliedCoupon.discount}%)</dt>
+                      <dd className="text-sm font-medium text-green-700">
+                        - Rs. {calculateSubtotal() - calculateDiscountedTotal()}
+                      </dd>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+                    <dt className="text-base font-medium">Total</dt>
                     <dd className="text-base font-medium text-gray-900">
-                      Rs. {calculateTotalDiscountedPrice()}
+                      Rs. {calculateDiscountedTotal()}
                     </dd>
                   </div>
                 </dl>
@@ -103,7 +171,7 @@ export default function OrderPayment() {
                     onClick={createOrderSubmitHandler}
                     className="w-full rounded-md border border-transparent bg-indigo-600 py-3 px-4 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                   >
-                    Confirm Payment - Rs. {calculateTotalDiscountedPrice()}
+                    Confirm Payment - Rs. {calculateDiscountedTotal()}
                   </button>
                 </div>
               </div>

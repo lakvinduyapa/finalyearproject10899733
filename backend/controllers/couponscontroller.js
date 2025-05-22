@@ -90,3 +90,17 @@ export const deletecouponcontroller = asyncHandler(async(req,res)=> {
         message:"Coupon deleted successfully",
     });
 });
+
+export const validateCouponByCode = asyncHandler(async (req, res) => {
+  const { code } = req.query;
+
+  const coupon = await Coupon.findOne({ code: code?.toUpperCase() });
+  if (!coupon) throw new Error("Invalid coupon code");
+  if (coupon.isExpired) throw new Error("This coupon has expired");
+
+  res.json({
+    status: "success",
+    message: "Valid coupon",
+    coupon,
+  });
+});

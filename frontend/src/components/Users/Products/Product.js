@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
 import { fetchProductAction } from "../../../redux/slices/products/productSlices";
+import { addToCart } from "../../../redux/slices/cart/cartSlice";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -90,9 +91,30 @@ export default function Product() {
           </div>
 
           {/* Inventory */}
-          <p className="text-sm text-green-700">
+          <p className="text-sm text-green-700 mb-4">
             Quantity left: {item.quantityleft}
           </p>
+
+          {item.quantityleft > 0 ? (
+            <button
+              onClick={() =>
+                dispatch(
+                  addToCart({
+                    _id: item._id,
+                    name: item.name,
+                    imageSrc: item.images?.[0],
+                    discountedPrice: item.price,
+                    qtyLeft: item.quantityleft,
+                  })
+                )
+              }
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded shadow"
+            >
+              Add to Cart
+            </button>
+          ) : (
+            <p className="text-red-500 font-semibold">Out of Stock</p>
+          )}
         </div>
       </div>
 

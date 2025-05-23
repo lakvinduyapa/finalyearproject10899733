@@ -4,7 +4,18 @@ import {
   resetErrAction,
   resetSuccessAction,
 } from "../globalActions/globalActions";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCategoriesAction } from "../../../redux/slices/categories/categoriesSlice";
+import { useEffect } from "react";
+
 const { createAsyncThunk, createSlice } = require("@reduxjs/toolkit");
+const dispatch = useDispatch();
+const { categories, loading: categoryLoading } = useSelector((state) => state.categories);
+
+useEffect(() => {
+  dispatch(fetchCategoriesAction());
+}, [dispatch]);
+
 
 // Initial state
 const initialState = {

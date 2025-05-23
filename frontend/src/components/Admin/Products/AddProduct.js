@@ -20,7 +20,8 @@ export default function CreateProduct() {
 
   const { name, description, category, price, totalQty, images } = formData;
   const { loading, error, isAdded } = useSelector((state) => state.products);
-  const { categories } = useSelector((state) => state.categories.categories);
+ const { categories } = useSelector((state) => state.categories);
+
 
   useEffect(() => {
     dispatch(fetchCategoriesAction());

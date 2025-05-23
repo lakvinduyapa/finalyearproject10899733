@@ -50,12 +50,14 @@ export default function Product() {
           >
             {item.images?.map((img, index) => (
               <SwiperSlide key={index}>
-                <img
-                  src={img}
-                  alt={`Product ${index + 1}`}
-                  className="w-full h-96 object-cover rounded"
-                />
-              </SwiperSlide>
+              <img
+                src={img}
+                alt={`Product ${index + 1}`}
+                className="h-[28rem] sm:h-[32rem] md:h-[36rem] lg:h-[40rem] w-full overflow-hidden rounded-md object-cover object-center"
+
+              />
+            </SwiperSlide>
+
             ))}
           </Swiper>
         </div>

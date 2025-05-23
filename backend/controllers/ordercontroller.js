@@ -108,7 +108,10 @@ export const createordercontroller = asyncHandler(async (req, res) => {
 
 export const getallorderscontroller = asyncHandler(async(req,res) =>{
 
-  const orders = await Order.find();
+  const orders = await Order.find()
+  .populate("orderItems.product", "name") 
+  .populate("user", "name");
+
   res.json({
     success:true,
     message:"All Orders fetched",

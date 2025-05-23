@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import AddShippingAddress from "../Forms/AddShippingAddress";
 import axios from "axios";
 import baseURL from "../../../utils/baseURL";
 import { useTranslation } from "react-i18next";
+import { getUserProfileAction } from "../../../redux/slices/users/usersSlice";
 
 export default function OrderPayment() {
   const dispatch = useDispatch();
@@ -13,11 +14,18 @@ export default function OrderPayment() {
 
   const cartItems = useSelector((state) => state.cart.cartItems);
   const userInfo = useSelector((state) => state.users.userAuth.userInfo);
-  const shippingAddress = userInfo?.userFound?.ShippingAddress;
+  const profile = useSelector((state) => state.users.profile);
+  const shippingAddress = profile?.user?.ShippingAddress;
 
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState(null);
+
+  useEffect(() => {
+    if (!profile?.user?.ShippingAddress) {
+      dispatch(getUserProfileAction());
+    }
+  }, [dispatch, profile?.user?.ShippingAddress]);
 
   const calculateSubtotal = () =>
     cartItems.reduce((acc, item) => acc + item.qty * item.discountedPrice, 0);

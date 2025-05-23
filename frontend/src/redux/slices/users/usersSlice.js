@@ -125,6 +125,8 @@ const usersSlice = createSlice({
     });
     builder.addCase(registerUserAction.fulfilled, (state, action) => {
       state.user = action.payload;
+      state.userAuth.userInfo = action.payload; // ✅ Ensures redirect works
+      localStorage.setItem("userInfo", JSON.stringify(action.payload)); // ✅ Optional: persist user
       state.loading = false;
     });
     builder.addCase(registerUserAction.rejected, (state, action) => {

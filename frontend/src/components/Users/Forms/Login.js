@@ -13,7 +13,7 @@ const Login = () => {
   const fontSizeClass = isTamil ? "text-sm" : "text-base";
 
   const [formData, setFormData] = useState({
-    email: "adminbosa@gmail.com",
+    email: "admin@gmail.com",
     password: "12345",
   });
 
